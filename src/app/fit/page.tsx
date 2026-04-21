@@ -5,7 +5,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useFit } from "@/context/FitContext";
 import { trackEvent } from "@/lib/analytics";
 
-const stepTitles = ["Basic Info", "Measurements", "Skill Level", "Preferences"];
+const CLUB_TYPES = [
+  { val: "Driver", icon: "🏌️" },
+  { val: "3 Wood", icon: "🪵" },
+  { val: "Fairway Wood", icon: "🪵" },
+  { val: "5 Hybrid", icon: "🔀" },
+  { val: "Hybrid", icon: "🔀" },
+  { val: "Rescue", icon: "🔀" },
+  { val: "4 Iron", icon: "🏗️" },
+  { val: "5 Iron", icon: "🏗️" },
+  { val: "6 Iron", icon: "🏗️" },
+  { val: "7 Iron", icon: "⛳" },
+  { val: "8 Iron", icon: "⛳" },
+  { val: "9 Iron", icon: "⛳" },
+  { val: "PW", icon: "🎯" },
+  { val: "SW", icon: "🏖️" },
+  { val: "Putter", icon: "🕳️" },
+];
+
+const stepTitles = ["Type", "Basic Info", "Measurements", "Skill Level", "Preferences"];
 
 function ProgressBar({ step }: { step: number }) {
   return (
@@ -20,10 +38,69 @@ function ProgressBar({ step }: { step: number }) {
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
         <motion.div
           className="h-full bg-gradient-to-r from-masters-green to-fairway rounded-full"
-          animate={{ width: `${((step + 1) / 4) * 100}%` }}
+          animate={{ width: `${((step + 1) / stepTitles.length) * 100}%` }}
           transition={{ duration: 0.4 }}
         />
       </div>
+    </div>
+  );
+}
+
+function StepType() {
+  const { data, update } = useFit();
+  return (
+    <div className="space-y-6">
+      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">What are you looking for?</h2>
+      <p className="text-gray-600 text-sm">Choose whether you need a complete set or a specific individual club.</p>
+      <div className="grid gap-4">
+        <button
+          onClick={() => update({ fitType: "set", clubType: "" })}
+          className={`text-left p-5 rounded-2xl border-2 transition ${data.fitType === "set" ? "border-masters-green bg-masters-green/5" : "border-gray-200 hover:border-gray-300"}`}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🎒</span>
+            <div>
+              <div className={`font-semibold text-lg ${data.fitType === "set" ? "text-masters-green" : "text-charcoal"}`}>Complete Set</div>
+              <div className="text-sm text-gray-500">Everything you need — driver, irons, putter, and bag</div>
+            </div>
+          </div>
+        </button>
+        <button
+          onClick={() => update({ fitType: "individual" })}
+          className={`text-left p-5 rounded-2xl border-2 transition ${data.fitType === "individual" ? "border-masters-green bg-masters-green/5" : "border-gray-200 hover:border-gray-300"}`}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🏌️</span>
+            <div>
+              <div className={`font-semibold text-lg ${data.fitType === "individual" ? "text-masters-green" : "text-charcoal"}`}>Individual Club</div>
+              <div className="text-sm text-gray-500">Looking for a specific club — driver, iron, wedge, or putter</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Club type selector — shown when individual is selected */}
+      {data.fitType === "individual" && (
+        <div className="pt-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Which club?</label>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {CLUB_TYPES.map((c) => (
+              <button
+                key={c.val}
+                onClick={() => update({ clubType: c.val })}
+                className={`py-3 px-2 rounded-xl border-2 text-center transition ${
+                  data.clubType === c.val
+                    ? "border-masters-green bg-masters-green/10 text-masters-green"
+                    : "border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                <div className="text-lg">{c.icon}</div>
+                <div className="text-xs font-medium mt-0.5">{c.val}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -281,15 +358,22 @@ export default function FitPage() {
     trackEvent("fitting_started");
   }, []);
 
+  const totalSteps = 5;
+
   const canNext = () => {
-    if (step === 0) return data.age && data.gender;
-    if (step === 1) return data.heightFeet && data.heightInches;
-    if (step === 2) return data.skill;
+    if (step === 0) {
+      if (!data.fitType) return false;
+      if (data.fitType === "individual" && !data.clubType) return false;
+      return true;
+    }
+    if (step === 1) return data.age && data.gender;
+    if (step === 2) return data.heightFeet && data.heightInches;
+    if (step === 3) return data.skill;
     return true;
   };
 
   const handleNext = () => {
-    if (step < 3) setStep(step + 1);
+    if (step < totalSteps - 1) setStep(step + 1);
     else {
       // Store in sessionStorage for results page
       sessionStorage.setItem("clubby-fit", JSON.stringify(data));
@@ -302,12 +386,14 @@ export default function FitPage() {
         budget: data.budgetMax || "any",
         gender: data.gender,
         hand: data.hand,
+        fitType: data.fitType,
+        clubType: data.clubType || undefined,
       });
       router.push("/results");
     }
   };
 
-  const components = [<StepBasic key={0} />, <StepMeasure key={1} />, <StepSkill key={2} />, <StepPrefs key={3} />];
+  const components = [<StepType key={0} />, <StepBasic key={1} />, <StepMeasure key={2} />, <StepSkill key={3} />, <StepPrefs key={4} />];
 
   return (
     <div className="pt-24 pb-16 min-h-screen bg-cream">
@@ -334,7 +420,7 @@ export default function FitPage() {
           )}
           <button onClick={handleNext} disabled={!canNext()}
             className={`flex-1 py-3 rounded-full font-semibold text-white transition ${canNext() ? "bg-masters-green hover:bg-deep-green" : "bg-gray-300 cursor-not-allowed"}`}>
-            {step === 3 ? "See My Results →" : "Next"}
+            {step === totalSteps - 1 ? "See My Results →" : "Next"}
           </button>
         </div>
       </div>

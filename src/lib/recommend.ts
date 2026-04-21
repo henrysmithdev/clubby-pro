@@ -28,6 +28,8 @@ export interface FitInput {
   skillLevel: "beginner" | "intermediate" | "advanced";
   hand: "right" | "left";
   budget?: "budget" | "mid" | "premium" | "any";
+  fitType?: "set" | "individual";
+  clubType?: string; // e.g. "Driver", "7 Iron" — only for fitType="individual"
 }
 
 export interface Recommendation {
@@ -171,7 +173,15 @@ function scoreClub(club: Club, input: FitInput): { score: number; reasons: strin
  * Returns top 3 recommendations sorted by score.
  */
 export function getRecommendations(input: FitInput): Recommendation[] {
-  const clubs = typeof window !== "undefined" ? getStoredClubs() : (clubsData as Club[]);
+  let clubs = typeof window !== "undefined" ? getStoredClubs() : (clubsData as Club[]);
+
+  // If searching for an individual club, only include sets that contain that club type
+  if (input.fitType === "individual" && input.clubType) {
+    const target = input.clubType.toLowerCase();
+    clubs = clubs.filter((c) =>
+      c.clubs.some((cl: string) => cl.toLowerCase() === target)
+    );
+  }
 
   const scored = clubs
     .map((club) => {

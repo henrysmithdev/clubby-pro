@@ -25,10 +25,13 @@ function fitDataToInput(data: FitData): FitInput {
     skillLevel: (data.skill as FitInput["skillLevel"]) || "beginner",
     hand: (data.hand as "right" | "left") || "right",
     budget,
+    fitType: (data.fitType as "set" | "individual") || "set",
+    clubType: data.clubType || undefined,
   };
 }
 
 const sampleData: FitData = {
+  fitType: "set", clubType: "",
   age: "10", gender: "male", hand: "right",
   heightFeet: "4", heightInches: "6", wristToFloor: "24", armLength: "22",
   skill: "beginner", budgetMin: "150", budgetMax: "300", brandPref: "No Preference",
@@ -73,14 +76,28 @@ export default function ResultsPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="text-center mb-10">
           <div className="text-5xl mb-4">🎉</div>
-          <h1 className="font-[var(--font-heading)] text-3xl md:text-5xl font-bold text-charcoal">Your Perfect Clubs!</h1>
-          <p className="mt-3 text-gray-600">Based on your measurements, here are our top {recs.length} recommendations.</p>
+          <h1 className="font-[var(--font-heading)] text-3xl md:text-5xl font-bold text-charcoal">
+            {data.fitType === "individual" && data.clubType
+              ? `Best ${data.clubType} Options`
+              : "Your Perfect Clubs!"}
+          </h1>
+          <p className="mt-3 text-gray-600">
+            {data.fitType === "individual" && data.clubType
+              ? `Sets that include a ${data.clubType} matched to your measurements.`
+              : `Based on your measurements, here are our top ${recs.length} recommendations.`}
+          </p>
         </motion.div>
 
         {/* Fit Profile Summary */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={revealed ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="bg-white rounded-2xl p-6 shadow-sm mb-8">
           <h2 className="font-[var(--font-heading)] text-lg font-bold text-masters-green mb-3">Fit Profile</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className={`grid grid-cols-2 ${data.fitType === "individual" ? "md:grid-cols-5" : "md:grid-cols-4"} gap-4 text-sm`}>
+            {data.fitType === "individual" && data.clubType && (
+              <div className="bg-masters-green/10 rounded-xl p-3 text-center">
+                <div className="text-gray-500 text-xs">Looking For</div>
+                <div className="font-semibold text-masters-green">{data.clubType}</div>
+              </div>
+            )}
             <div className="bg-cream rounded-xl p-3 text-center">
               <div className="text-gray-500 text-xs">Height</div>
               <div className="font-semibold text-charcoal">{data.heightFeet}&apos;{data.heightInches}&quot;</div>
@@ -131,11 +148,14 @@ export default function ResultsPage() {
 
               {/* Clubs in set */}
               <div className="flex flex-wrap gap-2 mb-4">
-                {rec.club.clubs.map((c) => (
-                  <span key={c} className="text-xs bg-cream text-charcoal px-2.5 py-1 rounded-full font-medium">
-                    {c}
-                  </span>
-                ))}
+                {rec.club.clubs.map((c) => {
+                  const isTarget = data.fitType === "individual" && data.clubType && c.toLowerCase() === data.clubType.toLowerCase();
+                  return (
+                    <span key={c} className={`text-xs px-2.5 py-1 rounded-full font-medium ${isTarget ? "bg-masters-green text-white ring-2 ring-masters-green/30" : "bg-cream text-charcoal"}`}>
+                      {isTarget ? `★ ${c}` : c}
+                    </span>
+                  );
+                })}
               </div>
 
               {/* Specs */}

@@ -2,6 +2,8 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface FitData {
+  fitType: "set" | "individual" | "";
+  clubType: string; // e.g. "Driver", "7 Iron", "Putter" — only used when fitType="individual"
   age: string;
   gender: string;
   hand: string;
@@ -16,6 +18,7 @@ export interface FitData {
 }
 
 const defaults: FitData = {
+  fitType: "", clubType: "",
   age: "", gender: "", hand: "right",
   heightFeet: "", heightInches: "", wristToFloor: "", armLength: "",
   skill: "",
