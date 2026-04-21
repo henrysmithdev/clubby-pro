@@ -111,7 +111,7 @@ function StepBasic() {
     <div className="space-y-6">
       <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Tell us about the golfer</h2>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Name <span className="text-red-400">*</span></label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Name <span className="text-masters-green">*</span></label>
         <input
           type="text" placeholder="e.g. Jake"
           value={data.name || ""} onChange={(e) => update({ name: e.target.value })}
@@ -120,7 +120,7 @@ function StepBasic() {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Age <span className="text-masters-green">*</span></label>
         <input
           type="number" min="4" max="18" placeholder="e.g. 10"
           value={data.age} onChange={(e) => update({ age: e.target.value })}
@@ -128,7 +128,7 @@ function StepBasic() {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Gender <span className="text-masters-green">*</span></label>
         <div className="flex gap-3">
           {["Male", "Female"].map((g) => (
             <button key={g} onClick={() => update({ gender: g.toLowerCase() })}
@@ -138,7 +138,7 @@ function StepBasic() {
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Handedness</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Handedness <span className="text-masters-green">*</span></label>
         <div className="flex gap-3">
           {["Right", "Left"].map((h) => (
             <button key={h} onClick={() => update({ hand: h.toLowerCase() })}
@@ -375,7 +375,7 @@ export default function FitPage() {
       if (data.fitType === "individual" && !data.clubType) return false;
       return true;
     }
-    if (step === 1) return data.name && data.age && data.gender;
+    if (step === 1) return data.name && data.age && data.gender && data.hand;
     if (step === 2) return data.heightFeet && data.heightInches;
     if (step === 3) return data.skill;
     return true;
