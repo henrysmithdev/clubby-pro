@@ -65,11 +65,8 @@ export default function Navbar() {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">⛳</span>
-            <span className="font-[var(--font-heading)] text-xl font-bold tracking-tight">
-              Clubby
-            </span>
+          <Link href="/" className="flex items-center">
+            <img src="/images/clubby-logo.jpg" alt="Clubby" className="h-10" />
           </Link>
 
           {/* Desktop links */}
