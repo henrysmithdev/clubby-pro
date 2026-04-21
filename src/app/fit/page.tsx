@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFit } from "@/context/FitContext";
+import { trackEvent } from "@/lib/analytics";
 
 const stepTitles = ["Basic Info", "Measurements", "Skill Level", "Preferences"];
 
@@ -276,6 +277,10 @@ export default function FitPage() {
   const { data } = useFit();
   const router = useRouter();
 
+  useEffect(() => {
+    trackEvent("fitting_started");
+  }, []);
+
   const canNext = () => {
     if (step === 0) return data.age && data.gender;
     if (step === 1) return data.heightFeet && data.heightInches;
@@ -288,6 +293,16 @@ export default function FitPage() {
     else {
       // Store in sessionStorage for results page
       sessionStorage.setItem("clubby-fit", JSON.stringify(data));
+      const heightIn = (parseInt(data.heightFeet) || 0) * 12 + (parseInt(data.heightInches) || 0);
+      trackEvent("fitting_completed", {
+        age: data.age,
+        height: `${data.heightFeet}'${data.heightInches}"`,
+        heightInches: heightIn,
+        skill: data.skill,
+        budget: data.budgetMax || "any",
+        gender: data.gender,
+        hand: data.hand,
+      });
       router.push("/results");
     }
   };

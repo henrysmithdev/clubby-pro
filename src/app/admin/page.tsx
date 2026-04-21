@@ -42,12 +42,12 @@ export default function AdminPage() {
           </div>
 
           {/* Analytics */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+          <a href="/admin/analytics" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition block">
             <div className="text-3xl mb-3">📊</div>
             <h2 className="font-semibold text-lg text-charcoal mb-1">Analytics</h2>
             <p className="text-sm text-gray-500 mb-4">View fitting completions, popular sizes, and traffic.</p>
-            <span className="text-xs text-gray-400 italic">Coming soon</span>
-          </div>
+            <span className="text-sm text-masters-green font-medium">View →</span>
+          </a>
         </div>
       </div>
     </main>

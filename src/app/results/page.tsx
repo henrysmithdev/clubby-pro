@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FitData } from "@/context/FitContext";
 import { getRecommendations, Recommendation, FitInput } from "@/lib/recommend";
+import { trackEvent } from "@/lib/analytics";
 
 function fitDataToInput(data: FitData): FitInput {
   const heightInches =
@@ -45,7 +46,13 @@ export default function ResultsPage() {
     const stored = sessionStorage.getItem("clubby-fit");
     const d = stored ? JSON.parse(stored) : sampleData;
     setData(d);
-    setRecs(getRecommendations(fitDataToInput(d)));
+    const results = getRecommendations(fitDataToInput(d));
+    setRecs(results);
+    trackEvent("result_view", {
+      topBrand: results[0]?.club.brand,
+      topModel: results[0]?.club.setName,
+      topScore: results[0]?.score,
+    });
   }, []);
 
   useEffect(() => {
@@ -173,6 +180,7 @@ export default function ResultsPage() {
                 href={rec.club.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("shop_click", { brand: rec.club.brand, model: rec.club.setName, price: rec.club.price })}
                 className="mt-4 block w-full py-2.5 rounded-full bg-gold text-charcoal font-semibold text-sm text-center hover:bg-soft-gold transition"
               >
                 Shop {rec.club.brand} →
