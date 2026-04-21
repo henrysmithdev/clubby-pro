@@ -56,7 +56,7 @@ export default function Navbar() {
   const links = [
     { href: "/", label: "Home" },
     { href: "/fit", label: "Get Fitted" },
-    { href: "/clubs", label: "Browse Clubs" },
+    // { href: "/clubs", label: "Browse Clubs" },  // Hidden per Bryce — re-enable later
     { href: "/learn", label: "Learn" },
     { href: "/about", label: "About" },
   ];
