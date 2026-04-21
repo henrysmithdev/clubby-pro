@@ -388,6 +388,7 @@ export default function FitPage() {
       sessionStorage.setItem("clubby-fit", JSON.stringify(data));
       const heightIn = (parseInt(data.heightFeet) || 0) * 12 + (parseInt(data.heightInches) || 0);
       trackEvent("fitting_completed", {
+        golfer: data.name || "Unknown",
         age: data.age,
         height: `${data.heightFeet}'${data.heightInches}"`,
         heightInches: heightIn,

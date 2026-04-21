@@ -200,13 +200,18 @@ export default function AnalyticsPage() {
               {summary.recentEvents.map((ev, i) => (
                 <div key={i} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
                   <EventTypeBadge type={ev.type} />
-                  <span className="text-xs text-gray-500 font-mono">
+                  {ev.data?.golfer && (
+                    <span className="px-2 py-0.5 bg-masters-green/10 text-masters-green text-xs font-semibold rounded-full shrink-0">
+                      {ev.data.golfer}
+                    </span>
+                  )}
+                  <span className="text-xs text-gray-500 font-mono shrink-0">
                     {new Date(ev.timestamp).toLocaleString()}
                   </span>
                   {ev.data && (
                     <span className="text-xs text-gray-400 truncate">
                       {Object.entries(ev.data)
-                        .filter(([, v]) => v !== undefined)
+                        .filter(([k, v]) => v !== undefined && k !== "golfer")
                         .map(([k, v]) => `${k}: ${v}`)
                         .join(" · ")}
                     </span>

@@ -52,6 +52,7 @@ export default function ResultsPage() {
     const results = getRecommendations(fitDataToInput(d));
     setRecs(results);
     trackEvent("result_view", {
+      golfer: d.name || "Unknown",
       topBrand: results[0]?.club.brand,
       topModel: results[0]?.club.setName,
       topScore: results[0]?.score,
@@ -250,7 +251,7 @@ export default function ResultsPage() {
                 href={rec.club.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("shop_click", { brand: rec.club.brand, model: rec.club.setName, price: rec.club.price })}
+                onClick={() => trackEvent("shop_click", { golfer: data?.name || "Unknown", brand: rec.club.brand, model: rec.club.setName, price: rec.club.price })}
                 className="mt-4 block w-full py-2.5 rounded-full bg-gold text-charcoal font-semibold text-sm text-center hover:bg-soft-gold transition"
               >
                 Shop {rec.club.brand} →
