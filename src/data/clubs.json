@@ -5,12 +5,27 @@
     "model": "Ultralight",
     "setName": "UL 39",
     "type": "full_set",
-    "clubs": ["Driver", "Hybrid", "7 Iron", "SW", "Putter"],
-    "targetAge": [3, 5],
-    "targetHeight": [33, 39],
+    "clubs": [
+      "Driver",
+      "Hybrid",
+      "7 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      3,
+      5
+    ],
+    "targetHeight": [
+      33,
+      39
+    ],
     "shaftFlex": "Ultralight",
     "gripSize": "Undersize",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 219,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -23,12 +38,28 @@
     "model": "Ultralight",
     "setName": "UL 45",
     "type": "full_set",
-    "clubs": ["Driver", "Hybrid", "7 Iron", "9 Iron", "SW", "Putter"],
-    "targetAge": [4, 6],
-    "targetHeight": [40, 45],
+    "clubs": [
+      "Driver",
+      "Hybrid",
+      "7 Iron",
+      "9 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      4,
+      6
+    ],
+    "targetHeight": [
+      40,
+      45
+    ],
     "shaftFlex": "Ultralight",
     "gripSize": "Undersize",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 249,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -41,12 +72,29 @@
     "model": "Ultralight",
     "setName": "UL 48",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "Hybrid", "7 Iron", "9 Iron", "SW", "Putter"],
-    "targetAge": [5, 7],
-    "targetHeight": [46, 48],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "7 Iron",
+      "9 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      5,
+      7
+    ],
+    "targetHeight": [
+      46,
+      48
+    ],
     "shaftFlex": "Ultralight",
     "gripSize": "Undersize",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 279,
     "url": "https://www.golfgalaxy.com/p/u-skids-golf-ul7-48-5-club-carry-set-46-48-in-24an3yl7485clbblcset/24an3yl7485clbblcset",
     "image": "",
@@ -59,12 +107,30 @@
     "model": "Ultralight",
     "setName": "UL 51",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "Hybrid", "6 Iron", "8 Iron", "PW", "SW", "Putter"],
-    "targetAge": [6, 8],
-    "targetHeight": [49, 51],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "6 Iron",
+      "8 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      6,
+      8
+    ],
+    "targetHeight": [
+      49,
+      51
+    ],
     "shaftFlex": "Ultralight",
     "gripSize": "Undersize",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 319,
     "url": "https://www.golfgalaxy.com/p/u-skids-golf-ul7-51-5-club-carry-set-51-54-in-24an3yl7515clbblcset/24an3yl7515clbblcset",
     "image": "",
@@ -77,12 +143,31 @@
     "model": "Ultralight",
     "setName": "UL 54",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "Hybrid", "5 Iron", "7 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [7, 9],
-    "targetHeight": [52, 54],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "5 Iron",
+      "7 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      7,
+      9
+    ],
+    "targetHeight": [
+      52,
+      54
+    ],
     "shaftFlex": "Ultralight",
     "gripSize": "Junior",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 349,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -95,12 +180,32 @@
     "model": "Ultralight",
     "setName": "UL 57",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "5 Hybrid", "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [8, 11],
-    "targetHeight": [55, 57],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      8,
+      11
+    ],
+    "targetHeight": [
+      55,
+      57
+    ],
     "shaftFlex": "Regular",
     "gripSize": "Junior",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 399,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -113,12 +218,33 @@
     "model": "Ultralight",
     "setName": "UL 60",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "5 Hybrid", "5 Iron", "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [9, 12],
-    "targetHeight": [58, 60],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      9,
+      12
+    ],
+    "targetHeight": [
+      58,
+      60
+    ],
     "shaftFlex": "Regular",
     "gripSize": "Junior",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 449,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -131,12 +257,34 @@
     "model": "Ultralight",
     "setName": "UL 63",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "5 Hybrid", "4 Iron", "5 Iron", "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [10, 13],
-    "targetHeight": [61, 63],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "4 Iron",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      10,
+      13
+    ],
+    "targetHeight": [
+      61,
+      63
+    ],
     "shaftFlex": "Stiff",
     "gripSize": "Junior/Standard",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 499,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
@@ -149,12 +297,27 @@
     "model": "XJ Series",
     "setName": "XJ-1",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Hybrid", "7 Iron", "SW", "Putter"],
-    "targetAge": [3, 5],
-    "targetHeight": [33, 38],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "7 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      3,
+      5
+    ],
+    "targetHeight": [
+      33,
+      38
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 199,
     "url": "https://www.dickssportinggoods.com/p/callaway-junior-xj1-6-piece-complete-set-height-38-46-18cwyyxj120184pcbset/18cwyyxj120184pcbset",
     "image": "",
@@ -167,12 +330,28 @@
     "model": "XJ Series",
     "setName": "XJ-2",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Hybrid", "6 Iron", "8 Iron", "PW", "Putter"],
-    "targetAge": [5, 8],
-    "targetHeight": [38, 47],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "6 Iron",
+      "8 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      5,
+      8
+    ],
+    "targetHeight": [
+      38,
+      47
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 249,
     "url": "https://www.dickssportinggoods.com/p/callaway-junior-xj2-9-piece-complete-set-height-47-53-18cwyyxj220186pcbset/18cwyyxj220186pcbset",
     "image": "",
@@ -185,12 +364,31 @@
     "model": "XJ Series",
     "setName": "XJ-3",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "5 Hybrid", "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [8, 12],
-    "targetHeight": [47, 53],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      8,
+      12
+    ],
+    "targetHeight": [
+      47,
+      53
+    ],
     "shaftFlex": "Junior Regular",
     "gripSize": "Junior",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 349,
     "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets",
     "image": "",
@@ -203,12 +401,26 @@
     "model": "Rory McIlroy Junior",
     "setName": "Rory 4+",
     "type": "full_set",
-    "clubs": ["Driver", "Rescue", "6 Iron", "PW", "Putter"],
-    "targetAge": [4, 6],
-    "targetHeight": [38, 44],
+    "clubs": [
+      "Driver",
+      "Rescue",
+      "6 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      4,
+      6
+    ],
+    "targetHeight": [
+      38,
+      44
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 199,
     "url": "https://www.pgatoursuperstore.com/taylormade-rory-kids-6-piece-junior-golf-set/2000000002311.html",
     "image": "",
@@ -221,12 +433,29 @@
     "model": "Rory McIlroy Junior",
     "setName": "Rory 8+",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Rescue", "6 Iron", "8 Iron", "PW", "SW", "Putter"],
-    "targetAge": [8, 12],
-    "targetHeight": [49, 56],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Rescue",
+      "6 Iron",
+      "8 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      8,
+      12
+    ],
+    "targetHeight": [
+      49,
+      56
+    ],
     "shaftFlex": "Junior Regular",
     "gripSize": "Junior",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 299,
     "url": "https://www.pgatoursuperstore.com/taylormade-rory-kids-8-piece-junior-golf-set/2000000002312.html",
     "image": "",
@@ -239,14 +468,31 @@
     "model": "Prodi G",
     "setName": "Prodi G (Small)",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Hybrid", "7 Iron", "9 Iron", "SW", "Putter"],
-    "targetAge": [5, 8],
-    "targetHeight": [38, 48],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "7 Iron",
+      "9 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      5,
+      8
+    ],
+    "targetHeight": [
+      38,
+      48
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 399,
-    "url": "https://www.golfgalaxy.com/f/ping-junior-golf",
+    "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
     "image": "",
     "tier": "premium",
     "notes": "Tour-quality engineering scaled down. Custom fitting available at Ping retailers."
@@ -257,14 +503,35 @@
     "model": "Prodi G",
     "setName": "Prodi G (Large)",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "Hybrid", "5 Iron", "6 Iron", "7 Iron", "8 Iron", "9 Iron", "PW", "SW", "Putter"],
-    "targetAge": [9, 13],
-    "targetHeight": [49, 62],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      9,
+      13
+    ],
+    "targetHeight": [
+      49,
+      62
+    ],
     "shaftFlex": "Junior Regular",
     "gripSize": "Junior",
-    "handedness": ["right", "left"],
+    "handedness": [
+      "right",
+      "left"
+    ],
     "price": 549,
-    "url": "https://www.golfgalaxy.com/f/ping-junior-golf",
+    "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
     "image": "",
     "tier": "premium",
     "notes": "11-club set. Best custom fitting program in junior golf."
@@ -275,14 +542,28 @@
     "model": "King Junior",
     "setName": "King Jr (Small)",
     "type": "full_set",
-    "clubs": ["Driver", "Hybrid", "7 Iron", "SW", "Putter"],
-    "targetAge": [3, 5],
-    "targetHeight": [33, 40],
+    "clubs": [
+      "Driver",
+      "Hybrid",
+      "7 Iron",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      3,
+      5
+    ],
+    "targetHeight": [
+      33,
+      40
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 179,
-    "url": "https://www.dickssportinggoods.com/f/cobra-junior-golf-sets",
+    "url": "https://www.dickssportinggoods.com/p/cobra-junior-9-piece-complete-set-ages-5-8-20cbry2020cbrrf58set/20cbry2020cbrrf58set",
     "image": "",
     "tier": "mid",
     "notes": "Solid value. Rickie Fowler-endorsed junior line."
@@ -293,14 +574,30 @@
     "model": "King Junior",
     "setName": "King Jr (Large)",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Hybrid", "6 Iron", "8 Iron", "PW", "Putter"],
-    "targetAge": [7, 12],
-    "targetHeight": [46, 58],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "6 Iron",
+      "8 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      7,
+      12
+    ],
+    "targetHeight": [
+      46,
+      58
+    ],
     "shaftFlex": "Junior Regular",
     "gripSize": "Junior",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 279,
-    "url": "https://www.dickssportinggoods.com/f/cobra-junior-golf-sets",
+    "url": "https://www.dickssportinggoods.com/p/cobra-junior-2024-11-piece-complete-set-ages-9-12-24cbrycbr2023jr91set/24cbrycbr2023jr91set",
     "image": "",
     "tier": "mid",
     "notes": "7-club set. Great balance of quality and price."
@@ -311,12 +608,25 @@
     "model": "Junior",
     "setName": "Junior (Small)",
     "type": "full_set",
-    "clubs": ["Driver", "Hybrid", "7 Iron", "Putter"],
-    "targetAge": [3, 5],
-    "targetHeight": [33, 40],
+    "clubs": [
+      "Driver",
+      "Hybrid",
+      "7 Iron",
+      "Putter"
+    ],
+    "targetAge": [
+      3,
+      5
+    ],
+    "targetHeight": [
+      33,
+      40
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 99,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
     "image": "",
@@ -329,12 +639,27 @@
     "model": "Junior",
     "setName": "Junior (Medium)",
     "type": "full_set",
-    "clubs": ["Driver", "Fairway Wood", "Hybrid", "7 Iron", "9 Iron", "Putter"],
-    "targetAge": [5, 8],
-    "targetHeight": [40, 50],
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "7 Iron",
+      "9 Iron",
+      "Putter"
+    ],
+    "targetAge": [
+      5,
+      8
+    ],
+    "targetHeight": [
+      40,
+      50
+    ],
     "shaftFlex": "Junior Light",
     "gripSize": "Undersize",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 129,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
     "image": "",
@@ -347,12 +672,29 @@
     "model": "Junior",
     "setName": "Junior (Large)",
     "type": "full_set",
-    "clubs": ["Driver", "3 Wood", "Hybrid", "5 Iron", "7 Iron", "9 Iron", "PW", "Putter"],
-    "targetAge": [9, 13],
-    "targetHeight": [50, 63],
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "5 Iron",
+      "7 Iron",
+      "9 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      9,
+      13
+    ],
+    "targetHeight": [
+      50,
+      63
+    ],
     "shaftFlex": "Junior Regular",
     "gripSize": "Junior",
-    "handedness": ["right"],
+    "handedness": [
+      "right"
+    ],
     "price": 179,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
     "image": "",
