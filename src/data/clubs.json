@@ -12,7 +12,7 @@
     "gripSize": "Undersize",
     "handedness": ["right", "left"],
     "price": 219,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2039",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "Industry standard for junior sizing. Best-in-class length/weight matching."
@@ -30,7 +30,7 @@
     "gripSize": "Undersize",
     "handedness": ["right", "left"],
     "price": 249,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2045",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "6-club set. Great starter set for kids showing early interest."
@@ -84,7 +84,7 @@
     "gripSize": "Junior",
     "handedness": ["right", "left"],
     "price": 349,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2054",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "9-club set. For competitive young golfers."
@@ -102,7 +102,7 @@
     "gripSize": "Junior",
     "handedness": ["right", "left"],
     "price": 399,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2057",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "10-club set. Near-complete bag for serious junior players."
@@ -120,7 +120,7 @@
     "gripSize": "Junior",
     "handedness": ["right", "left"],
     "price": 449,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2060",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "11-club set. Full bag for competitive juniors."
@@ -138,7 +138,7 @@
     "gripSize": "Junior/Standard",
     "handedness": ["right", "left"],
     "price": 499,
-    "url": "https://www.golfgalaxy.com/f/us-kids-golf-junior-sets?query=us%20kids%20ul%2063",
+    "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
     "image": "",
     "tier": "premium",
     "notes": "Full 12-club set. Bridge to adult clubs."
@@ -192,7 +192,7 @@
     "gripSize": "Junior",
     "handedness": ["right"],
     "price": 349,
-    "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets?query=callaway%20xj3",
+    "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets",
     "image": "",
     "tier": "premium",
     "notes": "10-club set. Performance-oriented for improving juniors."
@@ -246,7 +246,7 @@
     "gripSize": "Undersize",
     "handedness": ["right", "left"],
     "price": 399,
-    "url": "https://www.golfgalaxy.com/f/ping-junior-golf?query=ping%20prodi%20g",
+    "url": "https://www.golfgalaxy.com/f/ping-junior-golf",
     "image": "",
     "tier": "premium",
     "notes": "Tour-quality engineering scaled down. Custom fitting available at Ping retailers."
@@ -264,7 +264,7 @@
     "gripSize": "Junior",
     "handedness": ["right", "left"],
     "price": 549,
-    "url": "https://www.golfgalaxy.com/f/ping-junior-golf?query=ping%20prodi%20g",
+    "url": "https://www.golfgalaxy.com/f/ping-junior-golf",
     "image": "",
     "tier": "premium",
     "notes": "11-club set. Best custom fitting program in junior golf."
