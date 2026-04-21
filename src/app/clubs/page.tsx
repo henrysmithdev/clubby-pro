@@ -169,6 +169,18 @@ export default function ClubsPage() {
                 transition={{ duration: 0.3, delay: Math.min(i * 0.05, 0.3) }}
                 className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition flex flex-col"
               >
+                {/* Product Image */}
+                {club.image && (
+                  <div className="relative w-full h-48 mb-4 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <img
+                      src={club.image}
+                      alt={`${club.brand} ${club.setName}`}
+                      className="max-h-full max-w-full object-contain p-2"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 {/* Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div>

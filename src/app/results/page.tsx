@@ -151,6 +151,23 @@ export default function ResultsPage() {
               transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
               className={`bg-white rounded-2xl p-6 shadow-sm border-2 ${i === 0 ? "border-masters-green" : "border-transparent"}`}
             >
+              {/* Product Image */}
+              {rec.club.image && (
+                <div className="relative w-full h-52 mb-4 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
+                  <img
+                    src={rec.club.image}
+                    alt={`${rec.club.brand} ${rec.club.setName}`}
+                    className="max-h-full max-w-full object-contain p-3"
+                    loading="lazy"
+                  />
+                  {i === 0 && (
+                    <span className="absolute top-2 left-2 bg-masters-green text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                      🏆 Best Match
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">

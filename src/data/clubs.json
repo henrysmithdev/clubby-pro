@@ -28,7 +28,7 @@
     ],
     "price": 219,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-39.jpg",
     "tier": "premium",
     "notes": "Industry standard for junior sizing. Best-in-class length/weight matching."
   },
@@ -62,7 +62,7 @@
     ],
     "price": 249,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-45.jpg",
     "tier": "premium",
     "notes": "6-club set. Great starter set for kids showing early interest."
   },
@@ -97,7 +97,7 @@
     ],
     "price": 279,
     "url": "https://www.golfgalaxy.com/p/u-skids-golf-ul7-48-5-club-carry-set-46-48-in-24an3yl7485clbblcset/24an3yl7485clbblcset",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-48.jpg",
     "tier": "premium",
     "notes": "7-club set. Most popular size for kindergarten-age golfers."
   },
@@ -133,7 +133,7 @@
     ],
     "price": 319,
     "url": "https://www.golfgalaxy.com/p/u-skids-golf-ul7-51-5-club-carry-set-51-54-in-24an3yl7515clbblcset/24an3yl7515clbblcset",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-51.jpg",
     "tier": "premium",
     "notes": "8-club set. Ideal transition to a more complete bag."
   },
@@ -170,7 +170,7 @@
     ],
     "price": 349,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-54.jpg",
     "tier": "premium",
     "notes": "9-club set. For competitive young golfers."
   },
@@ -208,7 +208,7 @@
     ],
     "price": 399,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-57.jpg",
     "tier": "premium",
     "notes": "10-club set. Near-complete bag for serious junior players."
   },
@@ -247,7 +247,7 @@
     ],
     "price": 449,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-60.jpg",
     "tier": "premium",
     "notes": "11-club set. Full bag for competitive juniors."
   },
@@ -287,7 +287,7 @@
     ],
     "price": 499,
     "url": "https://www.golfgalaxy.com/f/us-kids-golf-club-sets",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-63.jpg",
     "tier": "premium",
     "notes": "Full 12-club set. Bridge to adult clubs."
   },
@@ -320,7 +320,7 @@
     ],
     "price": 199,
     "url": "https://www.dickssportinggoods.com/p/callaway-junior-xj1-6-piece-complete-set-height-38-46-18cwyyxj120184pcbset/18cwyyxj120184pcbset",
-    "image": "",
+    "image": "/images/clubs/callaway-xj1.jpg",
     "tier": "premium",
     "notes": "Great brand recognition. Lightweight graphite shafts."
   },
@@ -354,7 +354,7 @@
     ],
     "price": 249,
     "url": "https://www.dickssportinggoods.com/p/callaway-junior-xj2-9-piece-complete-set-height-47-53-18cwyyxj220186pcbset/18cwyyxj220186pcbset",
-    "image": "",
+    "image": "/images/clubs/callaway-xj2.jpg",
     "tier": "premium",
     "notes": "7-club set. Forgiving faces for developing swings."
   },
@@ -391,7 +391,7 @@
     ],
     "price": 349,
     "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets",
-    "image": "",
+    "image": "/images/clubs/callaway-xj3.jpg",
     "tier": "premium",
     "notes": "10-club set. Performance-oriented for improving juniors."
   },
@@ -423,7 +423,7 @@
     ],
     "price": 199,
     "url": "https://www.pgatoursuperstore.com/taylormade-rory-kids-6-piece-junior-golf-set/2000000002311.html",
-    "image": "",
+    "image": "/images/clubs/taylormade-rory-4plus.jpg",
     "tier": "premium",
     "notes": "Rory branding appeals to kids. Lightweight and forgiving."
   },
@@ -458,7 +458,7 @@
     ],
     "price": 299,
     "url": "https://www.pgatoursuperstore.com/taylormade-rory-kids-8-piece-junior-golf-set/2000000002312.html",
-    "image": "",
+    "image": "/images/clubs/taylormade-rory-8plus.jpg",
     "tier": "premium",
     "notes": "8-club set. Good value for the quality."
   },
@@ -493,7 +493,7 @@
     ],
     "price": 399,
     "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
-    "image": "",
+    "image": "/images/clubs/ping-prodi-g.png",
     "tier": "premium",
     "notes": "Tour-quality engineering scaled down. Custom fitting available at Ping retailers."
   },
@@ -532,7 +532,7 @@
     ],
     "price": 549,
     "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
-    "image": "",
+    "image": "/images/clubs/ping-prodi-g.png",
     "tier": "premium",
     "notes": "11-club set. Best custom fitting program in junior golf."
   },
@@ -564,7 +564,7 @@
     ],
     "price": 179,
     "url": "https://www.dickssportinggoods.com/p/cobra-junior-9-piece-complete-set-ages-5-8-20cbry2020cbrrf58set/20cbry2020cbrrf58set",
-    "image": "",
+    "image": "/images/clubs/cobra-jr-small.jpg",
     "tier": "mid",
     "notes": "Solid value. Rickie Fowler-endorsed junior line."
   },
@@ -598,7 +598,7 @@
     ],
     "price": 279,
     "url": "https://www.dickssportinggoods.com/p/cobra-junior-2024-11-piece-complete-set-ages-9-12-24cbrycbr2023jr91set/24cbrycbr2023jr91set",
-    "image": "",
+    "image": "/images/clubs/cobra-jr-large.jpg",
     "tier": "mid",
     "notes": "7-club set. Great balance of quality and price."
   },
@@ -629,7 +629,7 @@
     ],
     "price": 99,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
-    "image": "",
+    "image": "/images/clubs/topflite-jr-small.jpg",
     "tier": "budget",
     "notes": "Best budget option. Great if the kid is just trying golf."
   },
@@ -662,7 +662,7 @@
     ],
     "price": 129,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
-    "image": "",
+    "image": "/images/clubs/topflite-jr-medium.jpg",
     "tier": "budget",
     "notes": "Affordable 6-club set. Available at Dick's Sporting Goods."
   },
@@ -697,7 +697,7 @@
     ],
     "price": 179,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-clubs",
-    "image": "",
+    "image": "/images/clubs/topflite-jr-large.jpg",
     "tier": "budget",
     "notes": "8-club set. Solid budget pick for older juniors."
   },
@@ -736,7 +736,7 @@
     ],
     "price": 649,
     "url": "https://www.pgatoursuperstore.com/us-kids-golf/",
-    "image": "",
+    "image": "/images/clubs/uskids-ul-63.jpg",
     "tier": "premium",
     "notes": "Tour-level performance for competitive teens. Designed to bridge junior and adult clubs."
   },
@@ -774,7 +774,7 @@
     ],
     "price": 599,
     "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets",
-    "image": "",
+    "image": "/images/clubs/callaway-xj-teen.jpg",
     "tier": "premium",
     "notes": "Transition set for teens moving toward adult-length clubs. Lightweight and forgiving."
   },
@@ -811,7 +811,7 @@
     ],
     "price": 549,
     "url": "https://www.dickssportinggoods.com/f/taylormade-junior-golf-sets",
-    "image": "",
+    "image": "/images/clubs/taylormade-teen.jpg",
     "tier": "mid",
     "notes": "Full-featured teen set with adult-style heads and teen-weight shafts. Great value."
   },
@@ -848,7 +848,7 @@
     ],
     "price": 299,
     "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-sets",
-    "image": "",
+    "image": "/images/clubs/topflite-xl-teen.jpg",
     "tier": "budget",
     "notes": "Affordable teen set for casual play or getting started. Includes stand bag."
   },
@@ -885,7 +885,7 @@
     ],
     "price": 449,
     "url": "https://www.dickssportinggoods.com/p/cobra-junior-2024-11-piece-complete-set-ages-9-12-24cbrycbr2023jr91set/24cbrycbr2023jr91set",
-    "image": "",
+    "image": "/images/clubs/cobra-varsity-teen.jpg",
     "tier": "mid",
     "notes": "Rickie Fowler endorsed. Bridges junior and adult equipment with tour-inspired design."
   },
@@ -924,7 +924,7 @@
     ],
     "price": 699,
     "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
-    "image": "",
+    "image": "/images/clubs/ping-prodi-g.png",
     "tier": "premium",
     "notes": "Premium teen fitting with Ping custom adjustment program. One-time free club lengthening as they grow."
   }
