@@ -700,5 +700,232 @@
     "image": "",
     "tier": "budget",
     "notes": "8-club set. Solid budget pick for older juniors."
+  },
+  {
+    "id": "uskids-tour-63",
+    "brand": "US Kids Golf",
+    "model": "Tour Series",
+    "setName": "Tour Series 63",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      12,
+      15
+    ],
+    "targetHeight": [
+      61,
+      66
+    ],
+    "shaftFlex": "Junior Regular",
+    "gripSize": "Junior",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 649,
+    "url": "https://www.pgatoursuperstore.com/us-kids-golf/",
+    "image": "",
+    "tier": "premium",
+    "notes": "Tour-level performance for competitive teens. Designed to bridge junior and adult clubs."
+  },
+  {
+    "id": "callaway-xj-4",
+    "brand": "Callaway",
+    "model": "XJ Series",
+    "setName": "XJ-4 Teen",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      12,
+      17
+    ],
+    "targetHeight": [
+      60,
+      70
+    ],
+    "shaftFlex": "Junior/Teen",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 599,
+    "url": "https://www.golfgalaxy.com/f/callaway-junior-golf-sets",
+    "image": "",
+    "tier": "premium",
+    "notes": "Transition set for teens moving toward adult-length clubs. Lightweight and forgiving."
+  },
+  {
+    "id": "taylormade-teen-set",
+    "brand": "TaylorMade",
+    "model": "Teen Package",
+    "setName": "Teen Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Rescue",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      13,
+      18
+    ],
+    "targetHeight": [
+      62,
+      72
+    ],
+    "shaftFlex": "Teen Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right"
+    ],
+    "price": 549,
+    "url": "https://www.dickssportinggoods.com/f/taylormade-junior-golf-sets",
+    "image": "",
+    "tier": "mid",
+    "notes": "Full-featured teen set with adult-style heads and teen-weight shafts. Great value."
+  },
+  {
+    "id": "top-flite-xl-teen",
+    "brand": "Top Flite",
+    "model": "XL Teen",
+    "setName": "XL Teen Complete",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      13,
+      18
+    ],
+    "targetHeight": [
+      60,
+      72
+    ],
+    "shaftFlex": "Teen",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 299,
+    "url": "https://www.dickssportinggoods.com/f/top-flite-junior-golf-sets",
+    "image": "",
+    "tier": "budget",
+    "notes": "Affordable teen set for casual play or getting started. Includes stand bag."
+  },
+  {
+    "id": "cobra-teen-ltdx",
+    "brand": "Cobra",
+    "model": "Teen",
+    "setName": "Teen Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "Fairway Wood",
+      "Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      13,
+      18
+    ],
+    "targetHeight": [
+      60,
+      72
+    ],
+    "shaftFlex": "Teen Regular",
+    "gripSize": "Junior/Standard",
+    "handedness": [
+      "right"
+    ],
+    "price": 449,
+    "url": "https://www.dickssportinggoods.com/p/cobra-junior-2024-11-piece-complete-set-ages-9-12-24cbrycbr2023jr91set/24cbrycbr2023jr91set",
+    "image": "",
+    "tier": "mid",
+    "notes": "Rickie Fowler endorsed. Bridges junior and adult equipment with tour-inspired design."
+  },
+  {
+    "id": "ping-prodi-g-teen",
+    "brand": "Ping",
+    "model": "Prodi G",
+    "setName": "Prodi G (Teen)",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      13,
+      18
+    ],
+    "targetHeight": [
+      60,
+      72
+    ],
+    "shaftFlex": "Teen/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 699,
+    "url": "https://www.pgatoursuperstore.com/ping-prodi-g/",
+    "image": "",
+    "tier": "premium",
+    "notes": "Premium teen fitting with Ping custom adjustment program. One-time free club lengthening as they grow."
   }
 ]
