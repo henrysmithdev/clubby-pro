@@ -32,7 +32,7 @@ function fitDataToInput(data: FitData): FitInput {
 
 const sampleData: FitData = {
   fitType: "set", clubType: "",
-  age: "10", gender: "male", hand: "right",
+  name: "Jake", age: "10", gender: "male", hand: "right",
   heightFeet: "4", heightInches: "6", wristToFloor: "24", armLength: "22",
   skill: "beginner", budgetMin: "150", budgetMax: "300", brandPref: "No Preference",
 };
