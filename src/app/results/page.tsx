@@ -82,7 +82,7 @@ export default function ResultsPage() {
           <h1 className="font-[var(--font-heading)] text-3xl md:text-5xl font-bold text-charcoal">
             {data.fitType === "individual" && data.clubType
               ? `Best ${data.clubType} Options`
-              : "Your Perfect Clubs!"}
+              : data?.name ? `${data.name}'s Perfect Clubs!` : "Your Perfect Clubs!"}
           </h1>
           <p className="mt-3 text-gray-600">
             {data.fitType === "individual" && data.clubType
@@ -93,8 +93,17 @@ export default function ResultsPage() {
 
         {/* Fit Profile Summary */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={revealed ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="bg-white rounded-2xl p-6 shadow-sm mb-8">
-          <h2 className="font-[var(--font-heading)] text-lg font-bold text-masters-green mb-3">Fit Profile</h2>
-          <div className={`grid grid-cols-2 ${data.fitType === "individual" ? "md:grid-cols-5" : "md:grid-cols-4"} gap-4 text-sm`}>
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="font-[var(--font-heading)] text-lg font-bold text-masters-green">Fit Profile</h2>
+            {data.name && <span className="px-3 py-1 bg-masters-green/10 text-masters-green text-sm font-semibold rounded-full">{data.name}</span>}
+          </div>
+          <div className={`grid grid-cols-2 ${data.fitType === "individual" ? "md:grid-cols-6" : "md:grid-cols-5"} gap-4 text-sm`}>
+            {data.name && (
+              <div className="bg-masters-green/10 rounded-xl p-3 text-center">
+                <div className="text-gray-500 text-xs">Golfer</div>
+                <div className="font-semibold text-masters-green">{data.name}</div>
+              </div>
+            )}
             {data.fitType === "individual" && data.clubType && (
               <div className="bg-masters-green/10 rounded-xl p-3 text-center">
                 <div className="text-gray-500 text-xs">Looking For</div>
