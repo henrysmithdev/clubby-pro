@@ -66,7 +66,7 @@ export default function Home() {
               href="/fit"
               className="inline-flex items-center mt-8 px-8 py-4 rounded-full bg-gold text-charcoal font-semibold text-lg hover:bg-soft-gold hover:scale-105 transition-all duration-200 shadow-lg"
             >
-              Find Their Perfect Fit →
+              Find Your Perfect Fit →
             </Link>
           </motion.div>
         </div>
