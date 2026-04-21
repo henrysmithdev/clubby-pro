@@ -69,7 +69,7 @@ export default function Navbar() {
             <img
               src="/images/clubby-logo-green.png"
               alt="Clubby"
-              className={`h-12 transition-all duration-300 ${scrolled || !isHome ? "" : "brightness-0 invert"}`}
+              className="h-12"
             />
           </Link>
 
