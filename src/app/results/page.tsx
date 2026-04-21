@@ -153,7 +153,7 @@ export default function ResultsPage() {
             >
               {/* Product Image */}
               {rec.club.image && (
-                <div className="relative w-full h-52 mb-4 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center">
+                <div className="relative w-full h-52 mb-4 rounded-xl overflow-hidden bg-white flex items-center justify-center">
                   <img
                     src={rec.club.image}
                     alt={`${rec.club.brand} ${rec.club.setName}`}
