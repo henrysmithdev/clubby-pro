@@ -6,8 +6,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center mb-4">
-              <img src="/images/clubby-logo-final.png" alt="Clubby" className="h-10" />
+            <div className="flex items-center gap-1.5 mb-4">
+              <img src="/images/clubby-bear.png" alt="" className="h-10" />
+              <span className="font-[var(--font-heading)] text-xl font-bold tracking-wide uppercase">Clubby</span>
             </div>
             <p className="text-sm text-gray-400">
               Science-backed club fitting for junior golfers. Because the right clubs make all the difference.
