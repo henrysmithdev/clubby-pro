@@ -249,7 +249,9 @@ export default function AdminClubsPage() {
                   <tr key={c.id} className="border-b border-gray-50 hover:bg-cream/50 transition">
                     <td className="px-4 py-3">
                       <div className="font-semibold text-charcoal">{c.brand}</div>
-                      <div className="text-xs text-gray-500">{c.setName} — {c.model}</div>
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-xs text-masters-green hover:underline">
+                        {c.setName} — {c.model}
+                      </a>
                     </td>
                     <td className="px-4 py-3 text-charcoal">{c.targetAge[0]}–{c.targetAge[1]}</td>
                     <td className="px-4 py-3 text-charcoal">{c.targetHeight[0]}″–{c.targetHeight[1]}″</td>
