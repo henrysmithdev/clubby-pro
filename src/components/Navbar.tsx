@@ -66,7 +66,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <img src="/images/clubby-logo-final.png" alt="Clubby" className="h-10" />
+            <img src="/images/clubby-logo-final.png" alt="Clubby" className="h-12" />
           </Link>
 
           {/* Desktop links */}
