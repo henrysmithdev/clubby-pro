@@ -67,7 +67,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1.5">
             <img src="/images/clubby-bear.png" alt="" className="h-10" />
-            <span className="font-[var(--font-heading)] text-xl font-bold tracking-wide uppercase">
+            <span className="font-[var(--font-heading)] text-2xl font-bold tracking-wider" style={{ fontVariant: "small-caps" }}>
               Clubby
             </span>
           </Link>
