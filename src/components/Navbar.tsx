@@ -67,9 +67,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <img
-              src={scrolled || !isHome ? "/images/clubby-logo-green.png" : "/images/clubby-logo-white.png"}
+              src="/images/clubby-logo-green.png"
               alt="Clubby"
-              className="h-12"
+              className={`h-12 transition-all duration-300 ${scrolled || !isHome ? "" : "brightness-0 invert"}`}
             />
           </Link>
 
