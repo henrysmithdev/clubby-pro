@@ -111,6 +111,15 @@ function StepBasic() {
     <div className="space-y-6">
       <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Tell us about the golfer</h2>
       <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Name <span className="text-red-400">*</span></label>
+        <input
+          type="text" placeholder="e.g. Jake"
+          value={data.name || ""} onChange={(e) => update({ name: e.target.value })}
+          className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-masters-green focus:border-transparent outline-none"
+          required
+        />
+      </div>
+      <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
         <input
           type="number" min="4" max="18" placeholder="e.g. 10"
@@ -366,7 +375,7 @@ export default function FitPage() {
       if (data.fitType === "individual" && !data.clubType) return false;
       return true;
     }
-    if (step === 1) return data.age && data.gender;
+    if (step === 1) return data.name && data.age && data.gender;
     if (step === 2) return data.heightFeet && data.heightInches;
     if (step === 3) return data.skill;
     return true;
