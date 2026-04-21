@@ -65,8 +65,11 @@ export default function ResultsPage() {
         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ["#006747", "#C8A951", "#E8D48B", "#1A8A64"] });
       }, 600);
       return () => clearTimeout(timer);
+    } else if (data) {
+      // Still reveal the profile section even with no results
+      setRevealed(true);
     }
-  }, [recs]);
+  }, [recs, data]);
 
   if (!data) return <div className="min-h-screen flex items-center justify-center text-gray-400">Loading…</div>;
 
@@ -116,6 +119,27 @@ export default function ResultsPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* No results state */}
+        {recs.length === 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white rounded-2xl p-8 shadow-sm text-center mb-8">
+            <div className="text-5xl mb-4">🔍</div>
+            <h2 className="font-[var(--font-heading)] text-xl font-bold text-charcoal mb-2">No exact matches found</h2>
+            <p className="text-gray-500 mb-6">
+              {data.fitType === "individual" && data.clubType
+                ? `We couldn't find a ${data.clubType} that matches your measurements. Try browsing our full catalog or adjusting your preferences.`
+                : "We couldn't find sets that match your measurements. Try adjusting your height, age, or preferences."}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="/fit" className="px-6 py-3 rounded-full bg-masters-green text-white font-semibold hover:bg-deep-green transition">
+                Try Again
+              </a>
+              <a href="/clubs" className="px-6 py-3 rounded-full border-2 border-masters-green text-masters-green font-semibold hover:bg-masters-green/5 transition">
+                Browse All Clubs
+              </a>
+            </div>
+          </motion.div>
+        )}
 
         {/* Recommendations */}
         <div className="space-y-6 mb-10">

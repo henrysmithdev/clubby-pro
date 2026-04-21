@@ -81,8 +81,13 @@ function scoreClub(club: Club, input: FitInput): { score: number; reasons: strin
       sizeNote = h < minH ? "Slightly short — may grow into this set" : "At the top end — may outgrow soon";
       reasons.push(sizeNote);
     } else if (dist <= 4) {
-      score += 5;
+      score += 10;
       sizeNote = h < minH ? "A bit small for this set" : "Likely too tall for this set";
+      reasons.push(sizeNote);
+    } else if (dist <= 6) {
+      score += 3;
+      sizeNote = h < minH ? "Quite short for this set — consider sizing down" : "Quite tall for this set — consider sizing up";
+      reasons.push(sizeNote);
     } else {
       return { score: 0, reasons: ["Height too far outside range"] };
     }
