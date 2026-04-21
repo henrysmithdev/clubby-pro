@@ -29,6 +29,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <MobileFitBar />
+        <script async src="https://static.shopmy.us/Auto/bZYNf-.js" data-sms="bZYNf-"></script>
       </body>
     </html>
   );
