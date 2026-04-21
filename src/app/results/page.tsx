@@ -4,7 +4,28 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { FitData } from "@/context/FitContext";
-import { getRecommendation } from "@/lib/recommend";
+import { getRecommendations, Recommendation, FitInput } from "@/lib/recommend";
+
+function fitDataToInput(data: FitData): FitInput {
+  const heightInches =
+    (parseInt(data.heightFeet) || 0) * 12 + (parseInt(data.heightInches) || 0);
+  const wtf = data.wristToFloor ? parseFloat(data.wristToFloor) : undefined;
+
+  let budget: FitInput["budget"] = "any";
+  const maxB = parseInt(data.budgetMax) || 9999;
+  if (maxB <= 150) budget = "budget";
+  else if (maxB <= 350) budget = "mid";
+  else if (maxB <= 600) budget = "premium";
+
+  return {
+    age: parseInt(data.age) || 8,
+    heightInches,
+    wristToFloor: wtf,
+    skillLevel: (data.skill as FitInput["skillLevel"]) || "beginner",
+    hand: (data.hand as "right" | "left") || "right",
+    budget,
+  };
+}
 
 const sampleData: FitData = {
   age: "10", gender: "male", hand: "right",
@@ -12,49 +33,54 @@ const sampleData: FitData = {
   skill: "beginner", budgetMin: "150", budgetMax: "300", brandPref: "No Preference",
 };
 
+const fitBadge = { perfect: "🏆 Best Fit", good: "👍 Great Fit", acceptable: "✅ Solid Option" };
+const fitColor = { perfect: "bg-masters-green text-white", good: "bg-gold/20 text-charcoal", acceptable: "bg-gray-100 text-gray-600" };
+
 export default function ResultsPage() {
   const [data, setData] = useState<FitData | null>(null);
+  const [recs, setRecs] = useState<Recommendation[]>([]);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("clubby-fit");
-    setData(stored ? JSON.parse(stored) : sampleData);
+    const d = stored ? JSON.parse(stored) : sampleData;
+    setData(d);
+    setRecs(getRecommendations(fitDataToInput(d)));
   }, []);
 
   useEffect(() => {
-    if (data) {
+    if (recs.length > 0) {
       const timer = setTimeout(() => {
         setRevealed(true);
         confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ["#006747", "#C8A951", "#E8D48B", "#1A8A64"] });
       }, 600);
       return () => clearTimeout(timer);
     }
-  }, [data]);
+  }, [recs]);
 
   if (!data) return <div className="min-h-screen flex items-center justify-center text-gray-400">Loading…</div>;
-
-  const rec = getRecommendation(data);
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-cream">
       <div className="max-w-3xl mx-auto px-4">
+        {/* Header */}
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="text-center mb-10">
           <div className="text-5xl mb-4">🎉</div>
-          <h1 className="font-[var(--font-heading)] text-3xl md:text-5xl font-bold text-charcoal">Your Perfect Set is Ready!</h1>
-          <p className="mt-3 text-gray-600">Based on your measurements, here&apos;s what we recommend.</p>
+          <h1 className="font-[var(--font-heading)] text-3xl md:text-5xl font-bold text-charcoal">Your Perfect Clubs!</h1>
+          <p className="mt-3 text-gray-600">Based on your measurements, here are our top {recs.length} recommendations.</p>
         </motion.div>
 
-        {/* Fit Profile */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={revealed ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-          <h2 className="font-[var(--font-heading)] text-xl font-bold text-masters-green mb-3">Fit Profile</h2>
+        {/* Fit Profile Summary */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={revealed ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="bg-white rounded-2xl p-6 shadow-sm mb-8">
+          <h2 className="font-[var(--font-heading)] text-lg font-bold text-masters-green mb-3">Fit Profile</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="bg-cream rounded-xl p-3 text-center">
               <div className="text-gray-500 text-xs">Height</div>
-              <div className="font-[var(--font-mono)] font-semibold text-charcoal">{data.heightFeet}&apos;{data.heightInches}&quot;</div>
+              <div className="font-semibold text-charcoal">{data.heightFeet}&apos;{data.heightInches}&quot;</div>
             </div>
             <div className="bg-cream rounded-xl p-3 text-center">
               <div className="text-gray-500 text-xs">Age</div>
-              <div className="font-[var(--font-mono)] font-semibold text-charcoal">{data.age} yrs</div>
+              <div className="font-semibold text-charcoal">{data.age} yrs</div>
             </div>
             <div className="bg-cream rounded-xl p-3 text-center">
               <div className="text-gray-500 text-xs">Skill</div>
@@ -65,49 +91,103 @@ export default function ResultsPage() {
               <div className="font-semibold text-charcoal capitalize">{data.hand}</div>
             </div>
           </div>
-          <div className="mt-4 space-y-1">
-            {rec.fitNotes.map((n, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="text-masters-green mt-0.5">✓</span>
-                <span>{n}</span>
+        </motion.div>
+
+        {/* Recommendations */}
+        <div className="space-y-6 mb-10">
+          {recs.map((rec, i) => (
+            <motion.div
+              key={rec.club.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={revealed ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
+              className={`bg-white rounded-2xl p-6 shadow-sm border-2 ${i === 0 ? "border-masters-green" : "border-transparent"}`}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${fitColor[rec.fit]}`}>
+                      {fitBadge[rec.fit]}
+                    </span>
+                    <span className="text-xs text-gray-400 font-mono">Score: {rec.score}/100</span>
+                  </div>
+                  <h3 className="font-[var(--font-heading)] text-xl font-bold text-charcoal">
+                    {rec.club.brand} {rec.club.setName}
+                  </h3>
+                  <p className="text-sm text-gray-500">{rec.club.model}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-masters-green font-mono">${rec.club.price}</div>
+                  <div className="text-xs text-gray-400">{rec.club.tier}</div>
+                </div>
               </div>
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Recommended Set */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={revealed ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-[var(--font-heading)] text-xl font-bold text-masters-green">{rec.setName}</h2>
-            <span className="text-2xl font-bold text-gold font-[var(--font-mono)]">{rec.totalPrice}</span>
-          </div>
-          <div className="space-y-3">
-            {rec.clubs.map((c, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={revealed ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.3, delay: 0.3 + i * 0.08 }}
-                className="flex items-center gap-4 p-3 rounded-xl bg-cream/60 hover:bg-cream transition">
-                <div className="w-10 h-10 rounded-full bg-masters-green/10 flex items-center justify-center text-masters-green font-bold text-xs shrink-0">
-                  {c.type.slice(0, 2)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-charcoal text-sm">{c.name}</div>
-                  <div className="text-xs text-gray-500">{c.brand} · {c.detail}</div>
-                </div>
-                <div className="font-[var(--font-mono)] text-sm text-masters-green font-medium shrink-0">{c.length}</div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+              {/* Clubs in set */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {rec.club.clubs.map((c) => (
+                  <span key={c} className="text-xs bg-cream text-charcoal px-2.5 py-1 rounded-full font-medium">
+                    {c}
+                  </span>
+                ))}
+              </div>
 
-        {/* CTAs */}
-        <motion.div initial={{ opacity: 0 }} animate={revealed ? { opacity: 1 } : {}} transition={{ delay: 0.8 }} className="flex flex-col sm:flex-row gap-3">
-          <button className="flex-1 py-3 rounded-full bg-gold text-charcoal font-semibold text-center hover:bg-soft-gold transition">
-            Shop This Set →
-          </button>
-          <button className="flex-1 py-3 rounded-full border-2 border-masters-green text-masters-green font-semibold text-center hover:bg-masters-green/5 transition">
-            Save Results
-          </button>
-          <Link href="/fit" className="flex-1 py-3 rounded-full border-2 border-gray-300 text-gray-600 font-semibold text-center hover:border-gray-400 transition">
+              {/* Specs */}
+              <div className="grid grid-cols-3 gap-3 mb-4 text-xs">
+                <div className="bg-cream rounded-lg p-2 text-center">
+                  <div className="text-gray-500">Shaft</div>
+                  <div className="font-semibold text-charcoal">{rec.club.shaftFlex}</div>
+                </div>
+                <div className="bg-cream rounded-lg p-2 text-center">
+                  <div className="text-gray-500">Grip</div>
+                  <div className="font-semibold text-charcoal">{rec.club.gripSize}</div>
+                </div>
+                <div className="bg-cream rounded-lg p-2 text-center">
+                  <div className="text-gray-500">For Heights</div>
+                  <div className="font-semibold text-charcoal">{rec.club.targetHeight[0]}&quot;–{rec.club.targetHeight[1]}&quot;</div>
+                </div>
+              </div>
+
+              {/* Reasons */}
+              <div className="space-y-1">
+                {rec.reasons.map((r, j) => (
+                  <div key={j} className="flex items-start gap-2 text-sm text-gray-600">
+                    <span className="text-masters-green mt-0.5 shrink-0">✓</span>
+                    <span>{r}</span>
+                  </div>
+                ))}
+                {rec.sizeNote && (
+                  <div className="flex items-start gap-2 text-sm text-amber-600">
+                    <span className="mt-0.5 shrink-0">⚠</span>
+                    <span>{rec.sizeNote}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Notes */}
+              {rec.club.notes && (
+                <p className="mt-3 text-xs text-gray-400 italic">{rec.club.notes}</p>
+              )}
+
+              {/* CTA */}
+              <a
+                href={rec.club.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 block w-full py-2.5 rounded-full bg-gold text-charcoal font-semibold text-sm text-center hover:bg-soft-gold transition"
+              >
+                Shop {rec.club.brand} →
+              </a>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTAs */}
+        <motion.div initial={{ opacity: 0 }} animate={revealed ? { opacity: 1 } : {}} transition={{ delay: 1 }} className="flex flex-col sm:flex-row gap-3">
+          <Link href="/fit" className="flex-1 py-3 rounded-full border-2 border-masters-green text-masters-green font-semibold text-center hover:bg-masters-green/5 transition">
             Start Over
+          </Link>
+          <Link href="/learn" className="flex-1 py-3 rounded-full border-2 border-gray-300 text-gray-600 font-semibold text-center hover:border-gray-400 transition">
+            Learn About Junior Fitting
           </Link>
         </motion.div>
       </div>

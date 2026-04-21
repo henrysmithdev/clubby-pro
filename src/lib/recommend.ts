@@ -1,94 +1,209 @@
-import { FitData } from "@/context/FitContext";
+import clubsData from "@/data/clubs.json";
 
-interface Club {
-  type: string;
-  name: string;
+export interface Club {
+  id: string;
   brand: string;
-  length: string;
-  detail: string;
-}
-
-interface Recommendation {
+  model: string;
   setName: string;
-  clubs: Club[];
-  totalPrice: string;
-  fitNotes: string[];
+  type: string;
+  clubs: string[];
+  targetAge: [number, number];
+  targetHeight: [number, number];
+  shaftFlex: string;
+  gripSize: string;
+  handedness: string[];
+  price: number;
+  url: string;
+  image: string;
+  tier: string;
+  notes: string;
 }
 
-export function getRecommendation(data: FitData): Recommendation {
-  const age = parseInt(data.age) || 10;
-  const heightIn = (parseInt(data.heightFeet) || 4) * 12 + (parseInt(data.heightInches) || 6);
-  const skill = data.skill || "beginner";
-  const budget = parseInt(data.budgetMax) || 300;
+export interface FitInput {
+  age: number;
+  heightInches: number;
+  wristToFloor?: number; // inches — most accurate sizing metric
+  handSize?: "small" | "medium" | "large";
+  skillLevel: "beginner" | "intermediate" | "advanced";
+  hand: "right" | "left";
+  budget?: "budget" | "mid" | "premium" | "any";
+}
 
-  // Size category
-  let size: "xs" | "sm" | "md" | "lg";
-  if (heightIn < 48) size = "xs";
-  else if (heightIn < 54) size = "sm";
-  else if (heightIn < 60) size = "md";
-  else size = "lg";
+export interface Recommendation {
+  club: Club;
+  score: number; // 0-100
+  reasons: string[];
+  fit: "perfect" | "good" | "acceptable";
+  sizeNote?: string;
+}
 
-  const sets: Record<string, { setName: string; clubs: Club[]; price: string }> = {
-    xs: {
-      setName: "US Kids Golf UL39",
-      clubs: [
-        { type: "Driver", name: "UL39 Driver", brand: "US Kids Golf", length: '29"', detail: "10.5° loft, graphite shaft" },
-        { type: "Hybrid", name: "UL39 Hybrid", brand: "US Kids Golf", length: '26"', detail: "Replaces hard-to-hit irons" },
-        { type: "7 Iron", name: "UL39 7-Iron", brand: "US Kids Golf", length: '24"', detail: "Wide sole, perimeter weighted" },
-        { type: "Putter", name: "UL39 Putter", brand: "US Kids Golf", length: '22"', detail: "Alignment aid, mallet style" },
-      ],
-      price: "$199",
-    },
-    sm: {
-      setName: "Callaway XJ-1",
-      clubs: [
-        { type: "Driver", name: "XJ-1 Driver", brand: "Callaway", length: '33"', detail: "Lightweight titanium, 12° loft" },
-        { type: "Fairway Wood", name: "XJ-1 5W", brand: "Callaway", length: '30"', detail: "Easy launch, low center of gravity" },
-        { type: "7 Iron", name: "XJ-1 7-Iron", brand: "Callaway", length: '27"', detail: "Oversized head, graphite shaft" },
-        { type: "PW", name: "XJ-1 PW", brand: "Callaway", length: '25.5"', detail: "Cavity back for forgiveness" },
-        { type: "Putter", name: "XJ-1 Putter", brand: "Callaway", length: '25"', detail: "Face-balanced mallet" },
-      ],
-      price: "$249",
-    },
-    md: {
-      setName: "Ping Prodi G",
-      clubs: [
-        { type: "Driver", name: "Prodi G Driver", brand: "Ping", length: '37"', detail: "Forged Ti face, adjustable loft" },
-        { type: "Hybrid", name: "Prodi G Hybrid", brand: "Ping", length: '33"', detail: "Maraging steel face" },
-        { type: "7 Iron", name: "Prodi G 7-Iron", brand: "Ping", length: '31"', detail: "CTP weighted, graphite shaft" },
-        { type: "9 Iron", name: "Prodi G 9-Iron", brand: "Ping", length: '29.5"', detail: "Perimeter weighted" },
-        { type: "SW", name: "Prodi G SW", brand: "Ping", length: '28.5"', detail: "56° wedge, wide sole" },
-        { type: "Putter", name: "Prodi G Putter", brand: "Ping", length: '29"', detail: "Slight arc, blade style" },
-      ],
-      price: "$399",
-    },
-    lg: {
-      setName: "TaylorMade Rory Junior",
-      clubs: [
-        { type: "Driver", name: "Rory Driver", brand: "TaylorMade", length: '40"', detail: "Speed pocket, 10.5° loft" },
-        { type: "3 Wood", name: "Rory 3W", brand: "TaylorMade", length: '37"', detail: "Low-profile design" },
-        { type: "5 Hybrid", name: "Rory Rescue", brand: "TaylorMade", length: '34"', detail: "Versatile from any lie" },
-        { type: "7 Iron", name: "Rory 7-Iron", brand: "TaylorMade", length: '32"', detail: "Speed bridge technology" },
-        { type: "PW", name: "Rory PW", brand: "TaylorMade", length: '30"', detail: "Precision short game" },
-        { type: "SW", name: "Rory SW", brand: "TaylorMade", length: '29"', detail: "56° bounce, C-grind" },
-        { type: "Putter", name: "Rory Putter", brand: "TaylorMade", length: '31"', detail: "Spider-style mallet" },
-      ],
-      price: "$449",
-    },
-  };
+/**
+ * Wrist-to-floor is the gold standard for club length fitting.
+ * If not provided, we estimate from height using standard proportions.
+ * Formula: wrist-to-floor ≈ height × 0.415 (kids tend toward 0.40-0.43)
+ */
+function estimateWristToFloor(heightInches: number): number {
+  return Math.round(heightInches * 0.415 * 10) / 10;
+}
 
-  const rec = sets[size];
+/**
+ * Score how well a club set matches the golfer's measurements.
+ * Returns 0-100 where 100 is a perfect fit.
+ */
+function scoreClub(club: Club, input: FitInput): { score: number; reasons: string[]; sizeNote?: string } {
+  let score = 0;
+  const reasons: string[] = [];
+  let sizeNote: string | undefined;
 
-  const fitNotes = [
-    `Height ${data.heightFeet}'${data.heightInches}" maps to ${size.toUpperCase()} size category`,
-    `Age ${age} — ${age < 8 ? "lighter shafts and oversized heads recommended" : "standard junior flex appropriate"}`,
-    skill === "beginner"
-      ? "Beginner: Extra-forgiving club heads with wider sweet spots"
-      : skill === "intermediate"
-      ? "Intermediate: Balanced forgiveness and control"
-      : "Advanced: More workable heads for shot shaping",
-    data.wristToFloor ? `Wrist-to-floor (${data.wristToFloor}") confirms ${rec.clubs[0].length.replace('"', '')}" driver length` : "Add wrist-to-floor measurement for more precise length fitting",
-  ];
+  const wtf = input.wristToFloor ?? estimateWristToFloor(input.heightInches);
+  const h = input.heightInches;
+  const age = input.age;
 
-  return { ...rec, totalPrice: rec.price, fitNotes };
+  // --- Height match (40 points max) ---
+  const [minH, maxH] = club.targetHeight;
+  const midH = (minH + maxH) / 2;
+  const rangeH = (maxH - minH) / 2;
+
+  if (h >= minH && h <= maxH) {
+    // Within range — score based on proximity to center
+    const distFromCenter = Math.abs(h - midH);
+    const heightScore = 40 * (1 - distFromCenter / (rangeH + 1));
+    score += Math.round(heightScore);
+    reasons.push("Height is in the ideal range for this set");
+  } else {
+    // Outside range — penalize by distance
+    const dist = h < minH ? minH - h : h - maxH;
+    if (dist <= 2) {
+      score += 20;
+      sizeNote = h < minH ? "Slightly short — may grow into this set" : "At the top end — may outgrow soon";
+      reasons.push(sizeNote);
+    } else if (dist <= 4) {
+      score += 5;
+      sizeNote = h < minH ? "A bit small for this set" : "Likely too tall for this set";
+    } else {
+      return { score: 0, reasons: ["Height too far outside range"] };
+    }
+  }
+
+  // --- Age match (25 points max) ---
+  const [minA, maxA] = club.targetAge;
+  if (age >= minA && age <= maxA) {
+    score += 25;
+    reasons.push(`Designed for ages ${minA}-${maxA}`);
+  } else if (age >= minA - 1 && age <= maxA + 1) {
+    score += 15;
+    reasons.push(`Close to target age range (${minA}-${maxA})`);
+  } else if (Math.abs(age - midH) > 3) {
+    score -= 10;
+  }
+
+  // --- Handedness (pass/fail — 0 points, but eliminates if no match) ---
+  if (!club.handedness.includes(input.hand)) {
+    return { score: 0, reasons: [`Not available in ${input.hand}-handed`] };
+  }
+
+  // --- Skill level / club count (15 points max) ---
+  const clubCount = club.clubs.length;
+  if (input.skillLevel === "beginner") {
+    if (clubCount <= 6) {
+      score += 15;
+      reasons.push("Simpler set — great for beginners");
+    } else if (clubCount <= 8) {
+      score += 10;
+    } else {
+      score += 5;
+      reasons.push("More clubs than a beginner typically needs");
+    }
+  } else if (input.skillLevel === "intermediate") {
+    if (clubCount >= 6 && clubCount <= 9) {
+      score += 15;
+      reasons.push("Good club variety for intermediate players");
+    } else {
+      score += 8;
+    }
+  } else {
+    // advanced
+    if (clubCount >= 8) {
+      score += 15;
+      reasons.push("Full club selection for competitive play");
+    } else {
+      score += 5;
+      reasons.push("May want more clubs at this level");
+    }
+  }
+
+  // --- Budget tier (10 points max) ---
+  const budget = input.budget ?? "any";
+  if (budget === "any") {
+    score += 10;
+  } else if (budget === club.tier) {
+    score += 10;
+    reasons.push(`Matches your ${budget} budget preference`);
+  } else if (
+    (budget === "mid" && club.tier === "premium") ||
+    (budget === "premium" && club.tier === "mid")
+  ) {
+    score += 5;
+  } else {
+    score += 2;
+  }
+
+  // --- Brand quality bonus (10 points max) ---
+  if (["US Kids Golf", "Ping"].includes(club.brand)) {
+    score += 10;
+    if (club.brand === "US Kids Golf") {
+      reasons.push("US Kids Golf — #1 junior fitting brand worldwide");
+    } else {
+      reasons.push("Ping — premium engineering with custom junior fitting");
+    }
+  } else if (["Callaway", "TaylorMade", "Cobra"].includes(club.brand)) {
+    score += 7;
+  } else {
+    score += 3;
+  }
+
+  return { score: Math.min(100, Math.max(0, score)), reasons, sizeNote };
+}
+
+/**
+ * Main recommendation engine.
+ * Returns top 3 recommendations sorted by score.
+ */
+export function getRecommendations(input: FitInput): Recommendation[] {
+  const clubs = clubsData as Club[];
+
+  const scored = clubs
+    .map((club) => {
+      const { score, reasons, sizeNote } = scoreClub(club, input);
+      const fit: Recommendation["fit"] =
+        score >= 75 ? "perfect" : score >= 50 ? "good" : "acceptable";
+      return { club, score, reasons, fit, sizeNote } as Recommendation;
+    })
+    .filter((r) => r.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  // Return top 3, but ensure variety (different brands if possible)
+  const results: Recommendation[] = [];
+  const usedBrands = new Set<string>();
+
+  for (const r of scored) {
+    if (results.length >= 3) break;
+    // First pick is always best score; after that prefer different brands
+    if (results.length === 0 || !usedBrands.has(r.club.brand)) {
+      results.push(r);
+      usedBrands.add(r.club.brand);
+    }
+  }
+
+  // If we didn't get 3 due to brand diversity, fill with next best
+  if (results.length < 3) {
+    for (const r of scored) {
+      if (results.length >= 3) break;
+      if (!results.find((x) => x.club.id === r.club.id)) {
+        results.push(r);
+      }
+    }
+  }
+
+  return results;
 }

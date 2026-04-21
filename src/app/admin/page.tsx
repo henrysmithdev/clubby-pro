@@ -26,12 +26,12 @@ export default function AdminPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Club Database */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
+          <a href="/admin/clubs" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition block">
             <div className="text-3xl mb-3">🏌️</div>
             <h2 className="font-semibold text-lg text-charcoal mb-1">Club Database</h2>
-            <p className="text-sm text-gray-500 mb-4">Add, edit, and remove junior golf clubs and sets.</p>
-            <span className="text-xs text-gray-400 italic">Coming soon</span>
-          </div>
+            <p className="text-sm text-gray-500 mb-4">View, add, edit, and remove junior golf clubs and sets.</p>
+            <span className="text-sm text-masters-green font-medium">20 sets →</span>
+          </a>
 
           {/* Fitting Algorithm */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
