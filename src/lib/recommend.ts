@@ -1,4 +1,5 @@
 import clubsData from "@/data/clubs.json";
+import { getClubs as getStoredClubs } from "./clubStore";
 
 export interface Club {
   id: string;
@@ -170,7 +171,7 @@ function scoreClub(club: Club, input: FitInput): { score: number; reasons: strin
  * Returns top 3 recommendations sorted by score.
  */
 export function getRecommendations(input: FitInput): Recommendation[] {
-  const clubs = clubsData as Club[];
+  const clubs = typeof window !== "undefined" ? getStoredClubs() : (clubsData as Club[]);
 
   const scored = clubs
     .map((club) => {

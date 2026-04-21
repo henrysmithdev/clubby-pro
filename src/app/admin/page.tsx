@@ -30,7 +30,7 @@ export default function AdminPage() {
             <div className="text-3xl mb-3">🏌️</div>
             <h2 className="font-semibold text-lg text-charcoal mb-1">Club Database</h2>
             <p className="text-sm text-gray-500 mb-4">View, add, edit, and remove junior golf clubs and sets.</p>
-            <span className="text-sm text-masters-green font-medium">20 sets →</span>
+            <span className="text-sm text-masters-green font-medium">Manage →</span>
           </a>
 
           {/* Fitting Algorithm */}

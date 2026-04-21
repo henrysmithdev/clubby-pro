@@ -2,21 +2,150 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import clubsData from "@/data/clubs.json";
 import { Club } from "@/lib/recommend";
+import { getClubs, saveClubs, deleteClub, resetClubs, generateId } from "@/lib/clubStore";
+
+const emptyClub: Club = {
+  id: "", brand: "", model: "", setName: "", type: "full_set",
+  clubs: [], targetAge: [5, 10], targetHeight: [40, 55],
+  shaftFlex: "Junior Regular", gripSize: "Junior",
+  handedness: ["right"], price: 0, url: "", image: "", tier: "mid", notes: "",
+};
+
+function ClubForm({ club, onSave, onCancel }: { club: Club; onSave: (c: Club) => void; onCancel: () => void }) {
+  const [form, setForm] = useState<Club>(club);
+  const [clubsText, setClubsText] = useState(club.clubs.join(", "));
+  const isNew = !club.id;
+
+  const set = (k: keyof Club, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const final = {
+      ...form,
+      id: form.id || generateId(form.brand, form.setName),
+      clubs: clubsText.split(",").map((s) => s.trim()).filter(Boolean),
+    };
+    onSave(final);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-masters-green/20 mb-6">
+      <h2 className="font-[var(--font-heading)] text-xl font-bold text-charcoal mb-4">
+        {isNew ? "Add New Club Set" : `Edit: ${club.brand} ${club.setName}`}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Brand *</label>
+          <input value={form.brand} onChange={(e) => set("brand", e.target.value)} required
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Model *</label>
+          <input value={form.model} onChange={(e) => set("model", e.target.value)} required
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Set Name *</label>
+          <input value={form.setName} onChange={(e) => set("setName", e.target.value)} required
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Price ($) *</label>
+          <input type="number" value={form.price} onChange={(e) => set("price", Number(e.target.value))} required
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Min Age</label>
+          <input type="number" value={form.targetAge[0]} onChange={(e) => set("targetAge", [Number(e.target.value), form.targetAge[1]])}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Max Age</label>
+          <input type="number" value={form.targetAge[1]} onChange={(e) => set("targetAge", [form.targetAge[0], Number(e.target.value)])}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Min Height (inches)</label>
+          <input type="number" value={form.targetHeight[0]} onChange={(e) => set("targetHeight", [Number(e.target.value), form.targetHeight[1]])}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Max Height (inches)</label>
+          <input type="number" value={form.targetHeight[1]} onChange={(e) => set("targetHeight", [form.targetHeight[0], Number(e.target.value)])}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-gray-500 text-xs mb-1">Clubs in Set (comma-separated)</label>
+          <input value={clubsText} onChange={(e) => setClubsText(e.target.value)}
+            placeholder="Driver, 3 Wood, 7 Iron, PW, Putter"
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Shaft Flex</label>
+          <select value={form.shaftFlex} onChange={(e) => set("shaftFlex", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green">
+            <option>Ultralight</option><option>Junior Light</option><option>Junior Regular</option><option>Regular</option><option>Stiff</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Grip Size</label>
+          <select value={form.gripSize} onChange={(e) => set("gripSize", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green">
+            <option>Undersize</option><option>Junior</option><option>Junior/Standard</option><option>Standard</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Tier</label>
+          <select value={form.tier} onChange={(e) => set("tier", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green">
+            <option value="budget">Budget</option><option value="mid">Mid</option><option value="premium">Premium</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-gray-500 text-xs mb-1">Handedness</label>
+          <select value={form.handedness.join(",")} onChange={(e) => set("handedness", e.target.value.split(","))}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green">
+            <option value="right">Right only</option><option value="left">Left only</option><option value="right,left">Both</option>
+          </select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-gray-500 text-xs mb-1">URL</label>
+          <input value={form.url} onChange={(e) => set("url", e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-gray-500 text-xs mb-1">Notes</label>
+          <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-charcoal focus:outline-none focus:ring-2 focus:ring-masters-green" />
+        </div>
+      </div>
+      <div className="flex gap-3 mt-4">
+        <button type="submit" className="px-6 py-2 rounded-full bg-masters-green text-white font-semibold text-sm hover:bg-opacity-90 transition">
+          {isNew ? "Add Club Set" : "Save Changes"}
+        </button>
+        <button type="button" onClick={onCancel} className="px-6 py-2 rounded-full border border-gray-300 text-gray-600 font-semibold text-sm hover:border-gray-400 transition">
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
 
 export default function AdminClubsPage() {
   const router = useRouter();
   const [authed, setAuthed] = useState(false);
   const [clubs, setClubs] = useState<Club[]>([]);
   const [search, setSearch] = useState("");
+  const [editing, setEditing] = useState<Club | null>(null);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem("clubby_admin")) {
       router.push("/");
     } else {
       setAuthed(true);
-      setClubs(clubsData as Club[]);
+      setClubs(getClubs());
     }
   }, [router]);
 
@@ -28,6 +157,31 @@ export default function AdminClubsPage() {
       c.setName.toLowerCase().includes(search.toLowerCase()) ||
       c.model.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleSave = (club: Club) => {
+    let updated: Club[];
+    if (adding) {
+      updated = [...clubs, club];
+    } else {
+      updated = clubs.map((c) => (c.id === club.id ? club : c));
+    }
+    saveClubs(updated);
+    setClubs(updated);
+    setEditing(null);
+    setAdding(false);
+  };
+
+  const handleDelete = (id: string) => {
+    if (!confirm("Delete this club set?")) return;
+    const updated = deleteClub(id);
+    setClubs(updated);
+  };
+
+  const handleReset = () => {
+    if (!confirm("Reset to default club database? This will undo all edits.")) return;
+    const updated = resetClubs();
+    setClubs(updated);
+  };
 
   const tierColor: Record<string, string> = {
     premium: "bg-masters-green/10 text-masters-green",
@@ -44,7 +198,26 @@ export default function AdminClubsPage() {
             <h1 className="font-[var(--font-heading)] text-3xl font-bold text-charcoal">Club Database</h1>
             <p className="text-gray-500 text-sm">{clubs.length} sets in database</p>
           </div>
+          <div className="flex gap-2">
+            <button onClick={() => { setAdding(true); setEditing({ ...emptyClub }); }}
+              className="px-5 py-2 rounded-full bg-masters-green text-white text-sm font-semibold hover:bg-opacity-90 transition">
+              + Add Club Set
+            </button>
+            <button onClick={handleReset}
+              className="px-4 py-2 rounded-full border border-gray-300 text-gray-500 text-xs hover:border-gray-400 transition">
+              Reset
+            </button>
+          </div>
         </div>
+
+        {/* Add/Edit Form */}
+        {editing && (
+          <ClubForm
+            club={editing}
+            onSave={handleSave}
+            onCancel={() => { setEditing(null); setAdding(false); }}
+          />
+        )}
 
         {/* Search */}
         <input
@@ -68,6 +241,7 @@ export default function AdminClubsPage() {
                   <th className="px-4 py-3">Price</th>
                   <th className="px-4 py-3">Tier</th>
                   <th className="px-4 py-3">Hand</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -87,6 +261,14 @@ export default function AdminClubsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-charcoal capitalize text-xs">{c.handedness.join(", ")}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2">
+                        <button onClick={() => { setAdding(false); setEditing(c); }}
+                          className="text-xs text-masters-green hover:underline">Edit</button>
+                        <button onClick={() => handleDelete(c.id)}
+                          className="text-xs text-red-400 hover:text-red-600">Delete</button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
