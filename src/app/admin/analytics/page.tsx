@@ -96,13 +96,14 @@ export default function AnalyticsPage() {
       return;
     }
     setAuthed(true);
-    setSummary(getSummary());
+    getSummary().then(setSummary);
   }, [router]);
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (confirm("Clear all analytics data? This cannot be undone.")) {
-      clearEvents();
-      setSummary(getSummary());
+      await clearEvents();
+      const fresh = await getSummary();
+      setSummary(fresh);
     }
   };
 
@@ -133,7 +134,7 @@ export default function AnalyticsPage() {
           <StatCard
             icon="📈"
             label="Completion Rate"
-            value={`${summary.completionRate}%`}
+            value={`${summary.totalFittingsStarted > 0 ? Math.round((summary.totalFittingsCompleted / summary.totalFittingsStarted) * 100) : 0}%`}
             sub={summary.totalFittingsStarted > 0 ? `${summary.totalFittingsCompleted}/${summary.totalFittingsStarted}` : undefined}
           />
           <StatCard icon="🛒" label="Shop Clicks" value={summary.totalShopClicks} />
@@ -165,7 +166,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 className="font-semibold text-charcoal mb-4">Age Distribution</h2>
             {summary.topAges.length > 0 ? (
-              <BarChart items={summary.topAges.map((a) => ({ label: `${a.age} yrs`, count: a.count }))} color="bg-gold" />
+              <BarChart items={summary.topAges.map((a) => ({ label: `${a.label} yrs`, count: a.count }))} color="bg-gold" />
             ) : (
               <p className="text-sm text-gray-400 italic">No data yet</p>
             )}
@@ -175,7 +176,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 className="font-semibold text-charcoal mb-4">Skill Levels</h2>
             {summary.topSkillLevels.length > 0 ? (
-              <BarChart items={summary.topSkillLevels.map((s) => ({ label: s.skill, count: s.count }))} color="bg-blue-500" />
+              <BarChart items={summary.topSkillLevels.map((s) => ({ label: s.label, count: s.count }))} color="bg-blue-500" />
             ) : (
               <p className="text-sm text-gray-400 italic">No data yet</p>
             )}
@@ -185,7 +186,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h2 className="font-semibold text-charcoal mb-4">Budget Range</h2>
             {summary.topBudgets.length > 0 ? (
-              <BarChart items={summary.topBudgets.map((b) => ({ label: `$${b.budget}`, count: b.count }))} color="bg-amber-500" />
+              <BarChart items={summary.topBudgets.map((b) => ({ label: `$${b.label}`, count: b.count }))} color="bg-amber-500" />
             ) : (
               <p className="text-sm text-gray-400 italic">No data yet</p>
             )}
@@ -206,7 +207,7 @@ export default function AnalyticsPage() {
                     </span>
                   )}
                   <span className="text-xs text-gray-500 font-mono shrink-0">
-                    {new Date(ev.timestamp).toLocaleString()}
+                    {new Date(ev.timestamp || ev.created_at || Date.now()).toLocaleString()}
                   </span>
                   {ev.data && (
                     <span className="text-xs text-gray-400 truncate">
