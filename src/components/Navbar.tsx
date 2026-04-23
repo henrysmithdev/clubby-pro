@@ -146,6 +146,12 @@ export default function Navbar() {
                       >
                         Sign In
                       </button>
+                      <p className="text-xs text-gray-400 mt-2 text-center">
+                        Forgot password?{" "}
+                        <a href="mailto:henry@aspenpartnergroup.com?subject=ClubbyPro%20Admin%20Password%20Reset" className="text-masters-green hover:underline">
+                          Contact admin
+                        </a>
+                      </p>
                     </motion.form>
                   )}
                 </AnimatePresence>
