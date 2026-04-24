@@ -927,5 +927,764 @@
     "image": "/images/clubs/ping-prodi-g.png",
     "tier": "premium",
     "notes": "Premium teen fitting with Ping custom adjustment program. One-time free club lengthening as they grow."
+  },
+  {
+    "id": "callaway-paradym-ai-smoke",
+    "brand": "Callaway",
+    "model": "Paradym Ai Smoke",
+    "setName": "Paradym Ai Smoke Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 2999,
+    "url": "https://www.callawaygolf.com/collections/paradym-ai-smoke",
+    "image": "/images/clubs/callaway-paradym.jpg",
+    "tier": "premium",
+    "notes": "AI-designed faces for maximum ball speed and forgiveness. Tour-proven technology."
+  },
+  {
+    "id": "callaway-rogue-st-max",
+    "brand": "Callaway",
+    "model": "Rogue ST Max",
+    "setName": "Rogue ST Max Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 1799,
+    "url": "https://www.callawaygolf.com/collections/rogue-st",
+    "image": "/images/clubs/callaway-rogue-st.jpg",
+    "tier": "mid",
+    "notes": "Great forgiveness for mid-handicap golfers. Jailbreak Speed Frame technology."
+  },
+  {
+    "id": "callaway-strata-complete",
+    "brand": "Callaway",
+    "model": "Strata",
+    "setName": "Strata Complete Set (16-Piece)",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 499,
+    "url": "https://www.dickssportinggoods.com/p/callaway-strata-16-piece-complete-set-22cwystrtrltm16pcset/22cwystrtrltm16pcset",
+    "image": "/images/clubs/callaway-strata.jpg",
+    "tier": "budget",
+    "notes": "Best-selling beginner set. Includes bag, headcovers, and everything needed to start playing."
+  },
+  {
+    "id": "taylormade-qi35",
+    "brand": "TaylorMade",
+    "model": "Qi35",
+    "setName": "Qi35 Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 2799,
+    "url": "https://www.taylormadegolf.com/Qi35/",
+    "image": "/images/clubs/taylormade-qi35.jpg",
+    "tier": "premium",
+    "notes": "Largest face in TaylorMade history. Maximum forgiveness with tour-level distance."
+  },
+  {
+    "id": "taylormade-stealth-2",
+    "brand": "TaylorMade",
+    "model": "Stealth 2",
+    "setName": "Stealth 2 Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 1899,
+    "url": "https://www.taylormadegolf.com/Stealth-2/",
+    "image": "/images/clubs/taylormade-stealth2.jpg",
+    "tier": "mid",
+    "notes": "Carbon face technology for explosive ball speed. Great for mid-to-low handicaps."
+  },
+  {
+    "id": "taylormade-rbz-speedlite",
+    "brand": "TaylorMade",
+    "model": "RBZ SpeedLite",
+    "setName": "RBZ SpeedLite Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "4 Hybrid",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 699,
+    "url": "https://www.dickssportinggoods.com/p/taylormade-rbz-speedlite-13-piece-complete-set-23tymrbzspdlt13pcset/23tymrbzspdlt13pcset",
+    "image": "/images/clubs/taylormade-rbz.jpg",
+    "tier": "budget",
+    "notes": "Affordable complete set from a top brand. Includes stand bag and all clubs needed to play."
+  },
+  {
+    "id": "titleist-t350",
+    "brand": "Titleist",
+    "model": "T350",
+    "setName": "T350 Iron Set + Woods",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 3499,
+    "url": "https://www.titleist.com/product/T350-Irons/T350.html",
+    "image": "/images/clubs/titleist-t350.jpg",
+    "tier": "premium",
+    "notes": "Tour-preferred brand. Maximum distance irons with superior feel. Popular on every major tour."
+  },
+  {
+    "id": "ping-g430",
+    "brand": "Ping",
+    "model": "G430",
+    "setName": "G430 Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 2999,
+    "url": "https://ping.com/en-us/clubs/irons/g430",
+    "image": "/images/clubs/ping-g430.jpg",
+    "tier": "premium",
+    "notes": "Industry-leading custom fitting. Extremely forgiving with great distance. Best fitting program in golf."
+  },
+  {
+    "id": "cobra-air-x2",
+    "brand": "Cobra",
+    "model": "Air-X 2",
+    "setName": "Air-X 2 Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Senior",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 1099,
+    "url": "https://www.cobragolf.com/collections/air-x-2",
+    "image": "/images/clubs/cobra-air-x2.jpg",
+    "tier": "mid",
+    "notes": "Ultralight design for effortless swing speed. Great for seniors and beginners who want quality."
+  },
+  {
+    "id": "cobra-fly-xl",
+    "brand": "Cobra",
+    "model": "Fly-XL",
+    "setName": "Fly-XL Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 599,
+    "url": "https://www.cobragolf.com/collections/fly-xl",
+    "image": "/images/clubs/cobra-fly-xl.jpg",
+    "tier": "budget",
+    "notes": "Forgiving and lightweight. Everything you need in one box. Great value from a premium brand."
+  },
+  {
+    "id": "cleveland-launcher-xl-halo",
+    "brand": "Cleveland",
+    "model": "Launcher XL Halo",
+    "setName": "Launcher XL Halo Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 799,
+    "url": "https://www.clevelandgolf.com/en/launcher-xl-halo-full-face",
+    "image": "/images/clubs/cleveland-launcher.jpg",
+    "tier": "mid",
+    "notes": "HiBore Crown design for easy launch. Full-face grooves for consistent spin on every strike."
+  },
+  {
+    "id": "mizuno-jpx925-hot-metal",
+    "brand": "Mizuno",
+    "model": "JPX925 Hot Metal",
+    "setName": "JPX925 Hot Metal Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "5 Iron",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular/Stiff",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 2499,
+    "url": "https://www.mizunogolf.com/us/clubs/irons/jpx925-hot-metal/",
+    "image": "/images/clubs/mizuno-jpx925.jpg",
+    "tier": "premium",
+    "notes": "Legendary Mizuno feel. Chromoly face for explosive distance. Best feel in game-improvement irons."
+  },
+  {
+    "id": "wilson-sgx",
+    "brand": "Wilson",
+    "model": "SGX",
+    "setName": "SGX Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 399,
+    "url": "https://www.wilson.com/en-us/golf/golf-club-sets",
+    "image": "/images/clubs/wilson-sgx.jpg",
+    "tier": "budget",
+    "notes": "Trusted brand since 1914. Solid starter set at an unbeatable price. Includes stand bag."
+  },
+  {
+    "id": "topflite-xl-adult",
+    "brand": "Top Flite",
+    "model": "XL",
+    "setName": "XL Complete Set (Adult)",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "4 Hybrid",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Regular",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 349,
+    "url": "https://www.dickssportinggoods.com/p/top-flite-xl-13-piece-complete-set-20tflxl13pccmpltgset/20tflxl13pccmpltgset",
+    "image": "/images/clubs/topflite-xl-adult.jpg",
+    "tier": "budget",
+    "notes": "Best value in golf. Includes everything you need for under $350. Available exclusively at Dick's."
+  },
+  {
+    "id": "callaway-reva-womens",
+    "brand": "Callaway",
+    "model": "REVA",
+    "setName": "REVA Women's Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      58,
+      72
+    ],
+    "shaftFlex": "Ladies",
+    "gripSize": "Ladies",
+    "handedness": [
+      "right"
+    ],
+    "price": 699,
+    "url": "https://www.callawaygolf.com/collections/reva",
+    "image": "/images/clubs/callaway-reva.jpg",
+    "tier": "mid",
+    "notes": "Designed specifically for women. Lightweight shafts and optimized lofts for slower swing speeds."
+  },
+  {
+    "id": "taylormade-kalea-premier",
+    "brand": "TaylorMade",
+    "model": "Kalea Premier",
+    "setName": "Kalea Premier Women's Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      58,
+      72
+    ],
+    "shaftFlex": "Ladies",
+    "gripSize": "Ladies",
+    "handedness": [
+      "right"
+    ],
+    "price": 1999,
+    "url": "https://www.taylormadegolf.com/Kalea-Premier/",
+    "image": "/images/clubs/taylormade-kalea.jpg",
+    "tier": "premium",
+    "notes": "Premium women's set with SpeedBridge technology. Beautiful design with tour-level performance."
+  },
+  {
+    "id": "cobra-fly-xl-womens",
+    "brand": "Cobra",
+    "model": "Fly-XL Women's",
+    "setName": "Fly-XL Women's Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      58,
+      72
+    ],
+    "shaftFlex": "Ladies",
+    "gripSize": "Ladies",
+    "handedness": [
+      "right"
+    ],
+    "price": 599,
+    "url": "https://www.cobragolf.com/collections/fly-xl-womens",
+    "image": "/images/clubs/cobra-fly-xl-womens.jpg",
+    "tier": "budget",
+    "notes": "Ultralight women's set. Forgiving and easy to hit. Great value from a premium brand."
+  },
+  {
+    "id": "topflite-xl-womens",
+    "brand": "Top Flite",
+    "model": "XL Women's",
+    "setName": "XL Women's Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      18,
+      80
+    ],
+    "targetHeight": [
+      58,
+      72
+    ],
+    "shaftFlex": "Ladies",
+    "gripSize": "Ladies",
+    "handedness": [
+      "right"
+    ],
+    "price": 299,
+    "url": "https://www.dickssportinggoods.com/f/top-flite-womens-golf-sets",
+    "image": "/images/clubs/topflite-xl-womens.jpg",
+    "tier": "budget",
+    "notes": "Most affordable women's set on the market. Includes bag and everything needed to start."
+  },
+  {
+    "id": "callaway-strata-senior",
+    "brand": "Callaway",
+    "model": "Strata Senior",
+    "setName": "Strata Senior Complete Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Hybrid",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      50,
+      90
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Senior",
+    "gripSize": "Standard",
+    "handedness": [
+      "right"
+    ],
+    "price": 549,
+    "url": "https://www.dickssportinggoods.com/p/callaway-strata-senior-complete-set",
+    "image": "/images/clubs/callaway-strata-senior.jpg",
+    "tier": "budget",
+    "notes": "Lightweight graphite shafts throughout for effortless swing speed. Designed for 50+ golfers."
+  },
+  {
+    "id": "ping-g430-senior",
+    "brand": "Ping",
+    "model": "G430 SFT",
+    "setName": "G430 SFT Senior Set",
+    "type": "full_set",
+    "clubs": [
+      "Driver",
+      "3 Wood",
+      "5 Hybrid",
+      "6 Iron",
+      "7 Iron",
+      "8 Iron",
+      "9 Iron",
+      "PW",
+      "SW",
+      "Putter"
+    ],
+    "targetAge": [
+      50,
+      90
+    ],
+    "targetHeight": [
+      64,
+      78
+    ],
+    "shaftFlex": "Senior",
+    "gripSize": "Standard",
+    "handedness": [
+      "right",
+      "left"
+    ],
+    "price": 2799,
+    "url": "https://ping.com/en-us/clubs/irons/g430",
+    "image": "/images/clubs/ping-g430-senior.jpg",
+    "tier": "premium",
+    "notes": "Straight Flight Technology for draw bias. Custom-fit senior flex options. Premium quality for experienced seniors."
   }
 ]
