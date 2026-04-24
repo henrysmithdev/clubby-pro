@@ -96,7 +96,7 @@ export default function Navbar() {
                   href="/admin"
                   className="text-sm font-medium hover:opacity-80 transition"
                 >
-                  Admin
+                  Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -111,7 +111,7 @@ export default function Navbar() {
                   onClick={() => setShowLogin(!showLogin)}
                   className="px-4 py-1.5 rounded-full border text-sm font-medium hover:opacity-80 transition"
                 >
-                  Admin Login
+                  Login
                 </button>
                 <AnimatePresence>
                   {showLogin && (
