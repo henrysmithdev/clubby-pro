@@ -135,15 +135,15 @@ export default function SwingAnalyzerPage() {
         const ctx = canvas.getContext("2d")!;
         
         // Extract 6 evenly spaced frames
-        const times = Array.from({ length: 6 }, (_, i) => (duration * (i + 0.5)) / 7);
+        const times = Array.from({ length: 4 }, (_, i) => (duration * (i + 0.5)) / 5);
         const extracted: string[] = [];
         let idx = 0;
 
         const captureFrame = () => {
-          canvas.width = Math.min(video.videoWidth, 720);
+          canvas.width = Math.min(video.videoWidth, 480);
           canvas.height = Math.round((canvas.width / video.videoWidth) * video.videoHeight);
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          extracted.push(canvas.toDataURL("image/jpeg", 0.7));
+          extracted.push(canvas.toDataURL("image/jpeg", 0.5));
           idx++;
           if (idx < times.length) {
             video.currentTime = times[idx];
@@ -247,7 +247,7 @@ export default function SwingAnalyzerPage() {
           <div className="max-w-lg mx-auto text-center py-20">
             <div className="text-6xl mb-6 animate-bounce">🏌️</div>
             <h2 className="text-2xl font-bold text-white mb-3">Analyzing Your Swing...</h2>
-            <p className="text-gray-400">Extracting frames and running AI analysis. This takes 10-20 seconds.</p>
+            <p className="text-gray-400">Extracting frames and running AI analysis. This takes about 10 seconds.</p>
             <div className="mt-8 w-64 mx-auto h-2 bg-gray-800 rounded-full overflow-hidden">
               <div className="h-full bg-gold rounded-full animate-pulse" style={{ width: "60%" }} />
             </div>

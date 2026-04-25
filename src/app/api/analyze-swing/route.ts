@@ -52,11 +52,11 @@ export async function POST(req: NextRequest) {
     // Build messages with frame images
     const content = [
       { type: 'text', text: SWING_PROMPT },
-      ...frames.slice(0, 6).map((frame: string, i: number) => ({
+      ...frames.slice(0, 4).map((frame: string, i: number) => ({
         type: 'image_url',
         image_url: {
           url: frame.startsWith('data:') ? frame : `data:image/jpeg;base64,${frame}`,
-          detail: 'high',
+          detail: 'low',
         },
       })),
     ]
@@ -68,9 +68,9 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [{ role: 'user', content }],
-        max_tokens: 2000,
+        max_tokens: 1500,
         temperature: 0.3,
       }),
     })
