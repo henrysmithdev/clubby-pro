@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="relative z-10">
           <motion.h1 {...fadeUp} className="font-[var(--font-heading)] text-4xl md:text-6xl font-bold text-white">Our Story</motion.h1>
           <motion.p {...fadeUp} className="mt-4 text-white/80 max-w-2xl mx-auto px-4 text-lg">
-            We believe every junior golfer deserves clubs that fit. Not hand-me-downs. Not guesswork. The right fit.
+            We believe every golfer deserves clubs that fit. Not hand-me-downs. Not guesswork. The right fit.
           </motion.p>
         </div>
       </section>
@@ -34,14 +34,14 @@ export default function AboutPage() {
             <div>
               <h2 className="font-[var(--font-heading)] text-2xl font-bold text-charcoal mb-4">The Problem</h2>
               <p className="text-gray-600">
-                90% of junior golfers play with clubs that are the wrong length, weight, or flex. Parents spend hundreds on
+                Most golfers play with clubs that are the wrong length, weight, or flex. People spend hundreds on
                 equipment their kids can&apos;t swing properly. Pro fittings cost $100+ and aren&apos;t designed for growing kids.
               </p>
             </div>
             <div>
               <h2 className="font-[var(--font-heading)] text-2xl font-bold text-charcoal mb-4">Our Solution</h2>
               <p className="text-gray-600">
-                Clubby uses data from thousands of junior fittings to match measurements to the right clubs — instantly and for free.
+                Clubby uses data from thousands of fittings to match measurements to the right clubs — instantly and for free.
                 Our algorithm considers height, wrist-to-floor distance, age, and skill level to recommend clubs that grow with your player.
               </p>
             </div>
@@ -55,7 +55,7 @@ export default function AboutPage() {
           <motion.h2 {...fadeUp} className="font-[var(--font-heading)] text-3xl md:text-4xl font-bold text-center text-charcoal mb-12">The Science</motion.h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: "📐", title: "Anthropometric Mapping", desc: "We map body measurements to optimal club dimensions using data from 10,000+ junior fittings." },
+              { icon: "📐", title: "Anthropometric Mapping", desc: "We map body measurements to optimal club dimensions using data from 10,000+ fittings." },
               { icon: "📈", title: "Growth Prediction", desc: "Our models account for growth trajectories so clubs stay relevant for 12-18 months." },
               { icon: "🔬", title: "Continuously Improving", desc: "Every fitting improves our model. We validate against PGA-certified fitter recommendations." },
             ].map((card, i) => (

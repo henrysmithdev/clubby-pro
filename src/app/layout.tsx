@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import MobileFitBar from "@/components/MobileFitBar";
 
 export const metadata: Metadata = {
-  title: "Clubby — Junior Golf Club Fitting",
-  description: "Find the perfect golf clubs for your junior golfer. Science-backed fitting recommendations based on age, height, and skill level.",
+  title: "Clubby — Golf Club Fitting for Everyone",
+  description: "Find the perfect golf clubs for any golfer — men, women, and juniors. Free, science-backed fitting recommendations based on age, height, gender, and skill level.",
 };
 
 export default function RootLayout({

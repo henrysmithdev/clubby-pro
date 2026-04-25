@@ -70,7 +70,7 @@ export default function ClubsPage() {
             Browse Clubs
           </h1>
           <p className="mt-3 text-gray-600 max-w-xl mx-auto">
-            Search our full catalog of junior golf clubs and sets. Find the perfect equipment by name, brand, or type.
+            Search our full catalog of golf clubs and sets for men, women, and juniors. Find the perfect equipment by name, brand, or type.
           </p>
         </div>
 

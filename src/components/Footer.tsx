@@ -11,7 +11,7 @@ export default function Footer() {
               <span className="font-[var(--font-heading)] text-2xl font-bold tracking-wider" style={{ fontVariant: "small-caps" }}>Clubby</span>
             </div>
             <p className="text-sm text-gray-400">
-              Science-backed club fitting for junior golfers. Because the right clubs make all the difference.
+              Science-backed club fitting for every golfer. Because the right clubs make all the difference.
             </p>
           </div>
           <div>

@@ -122,7 +122,7 @@ function StepBasic() {
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Age <span className="text-masters-green">*</span></label>
         <input
-          type="number" min="4" max="18" placeholder="e.g. 10"
+          type="number" min="4" max="90" placeholder="e.g. 35"
           value={data.age} onChange={(e) => update({ age: e.target.value })}
           className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-masters-green focus:border-transparent outline-none"
         />
@@ -315,6 +315,34 @@ function StepSkill() {
             </div>
           </button>
         ))}
+      </div>
+
+      {/* Handicap */}
+      <div className="mt-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Handicap <span className="text-gray-400 font-normal">(optional)</span></label>
+        <p className="text-xs text-gray-500 mb-3">If you know your handicap, it helps us fine-tune our recommendation.</p>
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { val: "none", label: "New / No Handicap", icon: "🆕" },
+            { val: "high", label: "25+", icon: "📈" },
+            { val: "mid", label: "15–24", icon: "📊" },
+            { val: "low-mid", label: "10–14", icon: "🎯" },
+            { val: "low", label: "5–9", icon: "⚡" },
+            { val: "single", label: "0–4", icon: "🏆" },
+            { val: "scratch", label: "Scratch / +", icon: "💎" },
+            { val: "unknown", label: "Not Sure", icon: "❓" },
+          ].map((h) => (
+            <button key={h.val} onClick={() => update({ handicap: h.val })}
+              className={`py-3 px-2 rounded-xl border-2 text-center transition ${
+                data.handicap === h.val
+                  ? "border-masters-green bg-masters-green/10 text-masters-green"
+                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+              }`}>
+              <div className="text-lg">{h.icon}</div>
+              <div className="text-xs font-medium mt-0.5">{h.label}</div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

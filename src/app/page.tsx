@@ -10,21 +10,21 @@ const fadeUp = {
 };
 
 const steps = [
-  { num: "1", icon: "📏", title: "Measure", desc: "Enter your junior golfer's height, age, and a few key measurements." },
+  { num: "1", icon: "📏", title: "Measure", desc: "Enter the golfer's height, age, gender, and a few key measurements." },
   { num: "2", icon: "🎯", title: "Match", desc: "Our algorithm matches measurements to the perfect club specs and brands." },
   { num: "3", icon: "🏌️", title: "Play", desc: "Shop confidently knowing every club is sized right for their game." },
 ];
 
 const testimonials = [
   { name: "Sarah M.", role: "Golf Mom, Atlanta", text: "Clubby saved us from buying the wrong set — again. My son's swing improved almost overnight with properly fitted clubs." },
-  { name: "Coach Davis", role: "PGA Junior Instructor", text: "I recommend Clubby to every parent. Properly sized clubs are the #1 thing holding junior golfers back." },
-  { name: "Mike R.", role: "Dad of 3 junior golfers", text: "Three kids, three different sizes. Clubby made it easy to get each one the right fit without spending hours in a pro shop." },
+  { name: "Coach Davis", role: "PGA Instructor", text: "I recommend Clubby to every student. Properly sized clubs are the #1 thing holding golfers back — juniors and adults alike." },
+  { name: "Mike R.", role: "Dad & Golfer", text: "Fitted my three kids and myself. Clubby made it easy to get each of us the right fit without spending hours in a pro shop." },
 ];
 
 const blogPreviews = [
-  { title: "Why Junior Golfers Need Fitted Clubs", category: "Fitting Guide", time: "5 min", image: "/images/father-son-golf.jpg" },
-  { title: "Top 5 Junior Club Sets for 2026", category: "Equipment Review", time: "7 min", image: "/images/boy-holding-club.jpg" },
-  { title: "When to Upgrade Your Kid's Clubs", category: "Parent Tips", time: "4 min", image: "/images/boy-swing.jpg" },
+  { title: "Why Every Golfer Needs Fitted Clubs", category: "Fitting Guide", time: "5 min", image: "/images/father-son-golf.jpg" },
+  { title: "Top Club Sets for 2026 — Men, Women & Juniors", category: "Equipment Review", time: "7 min", image: "/images/boy-holding-club.jpg" },
+  { title: "When to Upgrade Your Clubs", category: "Tips", time: "4 min", image: "/images/boy-swing.jpg" },
 ];
 
 export default function Home() {
@@ -54,8 +54,8 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mt-6 text-lg md:text-xl text-white/80 max-w-2xl mx-auto"
           >
-            Free, science-backed club fitting recommendations for junior golfers.
-            Enter a few measurements. Get the perfect set.
+            Free, science-backed club fitting recommendations for every golfer — men, women, and juniors.
+            Enter a few measurements. Get the perfect fitting club or set.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

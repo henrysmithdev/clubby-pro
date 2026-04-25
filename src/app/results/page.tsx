@@ -27,6 +27,8 @@ function fitDataToInput(data: FitData): FitInput {
     budget,
     fitType: (data.fitType as "set" | "individual") || "set",
     clubType: data.clubType || undefined,
+    gender: (data.gender as "male" | "female") || "male",
+    handicap: data.handicap || undefined,
   };
 }
 
@@ -34,7 +36,7 @@ const sampleData: FitData = {
   fitType: "set", clubType: "",
   name: "Jake", age: "10", gender: "male", hand: "right",
   heightFeet: "4", heightInches: "6", wristToFloor: "24", armLength: "22",
-  skill: "beginner", budgetMin: "150", budgetMax: "300", brandPref: "No Preference",
+  skill: "beginner", handicap: "", budgetMin: "150", budgetMax: "300", brandPref: "No Preference",
 };
 
 const fitBadge = { perfect: "🏆 Best Fit", good: "👍 Great Fit", acceptable: "✅ Solid Option" };

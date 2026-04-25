@@ -13,6 +13,7 @@ export interface FitData {
   wristToFloor: string;
   armLength: string;
   skill: string;
+  handicap: string;
   budgetMin: string;
   budgetMax: string;
   brandPref: string;
@@ -22,7 +23,7 @@ const defaults: FitData = {
   fitType: "", clubType: "",
   name: "", age: "", gender: "", hand: "right",
   heightFeet: "", heightInches: "", wristToFloor: "", armLength: "",
-  skill: "",
+  skill: "", handicap: "",
   budgetMin: "", budgetMax: "", brandPref: "",
 };
 

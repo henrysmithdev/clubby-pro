@@ -20,7 +20,7 @@ export default function LearnPage() {
           className="font-[var(--font-heading)] text-4xl md:text-6xl font-bold text-white">
           Learn
         </motion.h1>
-        <p className="mt-3 text-white/80 text-lg">Guides, reviews, and tips for junior golf families.</p>
+        <p className="mt-3 text-white/80 text-lg">Guides, reviews, and tips for golfers of all ages.</p>
       </section>
 
       <section className="max-w-6xl mx-auto px-4 py-12">
