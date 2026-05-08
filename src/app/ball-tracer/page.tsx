@@ -140,6 +140,37 @@ function generateEstimatedTracerPoints(seed: BallLocation, startSeconds: number,
   });
 }
 
+function isCoherentSeededPath(seed: BallLocation, detected: TracerPoint[]) {
+  const sorted = sortTracerPoints(detected) as TracerPoint[];
+  if (sorted.length < 3) return false;
+
+  const firstDistance = Math.hypot(sorted[0].x - seed.x, sorted[0].y - seed.y);
+  const finalDistance = Math.hypot(sorted[sorted.length - 1].x - seed.x, sorted[sorted.length - 1].y - seed.y);
+  if (firstDistance > 0.22 || finalDistance < 0.045) return false;
+
+  const steps = [];
+  for (let index = 1; index < sorted.length; index += 1) {
+    const previous = sorted[index - 1];
+    const current = sorted[index];
+    const dx = current.x - previous.x;
+    const dy = current.y - previous.y;
+    const jump = Math.hypot(dx, dy);
+    if (jump > 0.28) return false;
+    if (jump > 0.008) steps.push({ dx, dy, jump });
+  }
+
+  if (steps.length < 2) return false;
+
+  const positiveX = steps.filter((step) => step.dx > 0.004).length;
+  const negativeX = steps.filter((step) => step.dx < -0.004).length;
+  const dominantX = Math.max(positiveX, negativeX);
+  const directionConsistency = dominantX / Math.max(1, positiveX + negativeX);
+  if (positiveX + negativeX >= 3 && directionConsistency < 0.65) return false;
+
+  const averageJump = steps.reduce((sum, step) => sum + step.jump, 0) / steps.length;
+  return averageJump <= 0.16;
+}
+
 function drawSmoothPath(
   ctx: CanvasRenderingContext2D,
   points: TracerPoint[],
@@ -303,19 +334,6 @@ export default function BallTracerPage() {
 
     const visiblePoints = getVisibleTracerPoints(points, video.currentTime) as TracerPoint[];
     drawSmoothPath(ctx, visiblePoints, canvas.width, canvas.height, settings);
-
-    for (const point of points) {
-      const marker = denormalizePoint(point, canvas.width, canvas.height);
-      ctx.save();
-      ctx.fillStyle = point.time <= video.currentTime ? settings.color : "rgba(255,255,255,0.65)";
-      ctx.strokeStyle = "rgba(0,0,0,0.75)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(marker.x, marker.y, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
-    }
   }, [points, settings]);
 
   useEffect(() => {
@@ -579,6 +597,14 @@ export default function BallTracerPage() {
         }
 
         setError("Clubby could not automatically find the ball flight in this clip. Try a slow-motion angle from behind the ball with the full launch in frame.");
+        return;
+      }
+
+      if (seedPoint && !isCoherentSeededPath(seedPoint, bestDetected as TracerPoint[])) {
+        const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[]);
+        setPoints(estimatedPoints);
+        setTrackingStatus("Detected motion was too scattered to trust, so Clubby generated a clean estimated tracer from your marked ball location.");
+        await seekVideo(video, estimatedPoints[0]?.time ?? startSeconds);
         return;
       }
 
