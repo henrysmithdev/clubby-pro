@@ -524,7 +524,7 @@ export default function BallTracerPage() {
               <li>• Use a tripod or steady phone.</li>
               <li>• Keep the full ball flight in frame.</li>
               <li>• Slow-motion video works best for fast drives.</li>
-              <li>• Use Auto Track first, then clean up points manually if needed.</li>
+              <li>• Start tracking just before impact, then clean up points manually if needed.</li>
             </ul>
           </div>
         </section>
@@ -619,11 +619,11 @@ export default function BallTracerPage() {
             <aside className="space-y-5">
               <div className="rounded-3xl border border-gold/20 bg-gray-950 p-5">
                 <h3 className="font-bold text-lg">Auto Track Settings</h3>
-                <p className="text-sm text-gray-400 mt-1">Narrow the scan to the part of the video where the ball is flying. This helps avoid the clubhead and body movement.</p>
+                <p className="text-sm text-gray-400 mt-1">Set Start just before impact and End when the ball leaves frame. This helps catch launch while avoiding extra club/body movement.</p>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <label className="text-sm text-gray-300">
-                    Start second
+                    Start second — just before impact
                     <input
                       type="number"
                       min="0"
@@ -634,7 +634,7 @@ export default function BallTracerPage() {
                     />
                   </label>
                   <label className="text-sm text-gray-300">
-                    End second
+                    End second — ball leaves frame
                     <input
                       type="number"
                       min="0.3"
@@ -647,8 +647,8 @@ export default function BallTracerPage() {
                 </div>
 
                 <div className="mt-3 flex gap-2">
-                  <button onClick={() => setTrackingBoundary("start")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set Start Here</button>
-                  <button onClick={() => setTrackingBoundary("end")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set End Here</button>
+                  <button onClick={() => setTrackingBoundary("start")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set Start Before Impact</button>
+                  <button onClick={() => setTrackingBoundary("end")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set End When Ball Leaves</button>
                 </div>
 
                 <label className="block mt-4 text-sm text-gray-300">
