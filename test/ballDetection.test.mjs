@@ -9,14 +9,15 @@ import {
 
 function makeFrame(width, height, spots = []) {
   const data = new Uint8ClampedArray(width * height * 4);
+  const background = spots.find((spot) => spot.background) ?? {};
   for (let i = 0; i < data.length; i += 4) {
-    data[i] = 20;
-    data[i + 1] = 80;
-    data[i + 2] = 35;
+    data[i] = background.r ?? 20;
+    data[i + 1] = background.g ?? 80;
+    data[i + 2] = background.b ?? 35;
     data[i + 3] = 255;
   }
 
-  for (const spot of spots) {
+  for (const spot of spots.filter((item) => !item.background)) {
     const radius = spot.radius ?? 1;
     for (let y = spot.y - radius; y <= spot.y + radius; y += 1) {
       for (let x = spot.x - radius; x <= spot.x + radius; x += 1) {
@@ -62,6 +63,21 @@ test('findBrightMovingBall returns null when there is no meaningful bright movem
   assert.equal(findBrightMovingBall(previousFrame, currentFrame), null);
 });
 
+test('findBrightMovingBall detects a small dark ball against bright sky when dark objects are enabled', () => {
+  const sky = { background: true, r: 190, g: 215, b: 235 };
+  const previousFrame = makeFrame(50, 25, [sky, { x: 12, y: 10, radius: 1, r: 65, g: 65, b: 62 }]);
+  const currentFrame = makeFrame(50, 25, [sky, { x: 22, y: 11, radius: 1, r: 55, g: 55, b: 52 }]);
+
+  const candidate = findBrightMovingBall(previousFrame, currentFrame, {
+    includeDarkObjects: true,
+    maxDarkBrightness: 95,
+  });
+
+  assert.ok(candidate, 'expected dark ball candidate');
+  assert.equal(Math.round(candidate.pixelX), 22);
+  assert.equal(Math.round(candidate.pixelY), 11);
+});
+
 test('traceBallFromFrameSamples converts detected movement into sorted tracer points', () => {
   const samples = [
     { time: 0, frame: makeFrame(20, 10, [{ x: 3, y: 4 }]) },
@@ -75,6 +91,24 @@ test('traceBallFromFrameSamples converts detected movement into sorted tracer po
   assert.deepEqual(points.map((point) => point.time), [0.1, 0.2]);
   assert.equal(Math.round(points[0].x * 20), 6);
   assert.equal(Math.round(points[1].x * 20), 10);
+});
+
+test('traceBallFromFrameSamples follows a seeded ball path instead of a larger distracting moving object', () => {
+  const samples = [
+    { time: 0, frame: makeFrame(60, 30, [{ x: 6, y: 16 }, { x: 44, y: 10, radius: 2 }]) },
+    { time: 0.1, frame: makeFrame(60, 30, [{ x: 12, y: 15 }, { x: 45, y: 10, radius: 2 }]) },
+    { time: 0.2, frame: makeFrame(60, 30, [{ x: 18, y: 14 }, { x: 46, y: 10, radius: 2 }]) },
+  ];
+
+  const points = traceBallFromFrameSamples(samples, {
+    seedPoint: { x: 6 / 60, y: 16 / 30 },
+    followSeed: true,
+    maxNormalizedJump: 0.22,
+    smooth: false,
+  });
+
+  assert.equal(points.length, 2);
+  assert.deepEqual(points.map((point) => Math.round(point.x * 60)), [12, 18]);
 });
 
 test('findBrightMovingBall can restrict search to a region of interest', () => {

@@ -34,10 +34,16 @@ function getOptions(options = {}) {
     minArea: options.minArea ?? 1,
     maxAreaRatio: options.maxAreaRatio ?? 0.05,
     minCompactness: options.minCompactness ?? 0.08,
+    minObjectContrast: options.minObjectContrast ?? 35,
+    includeDarkObjects: options.includeDarkObjects ?? false,
+    maxDarkBrightness: options.maxDarkBrightness ?? 120,
     region: options.region ?? null,
     minConfidence: options.minConfidence ?? 0,
     smooth: options.smooth ?? true,
     maxNormalizedJump: options.maxNormalizedJump ?? 0.32,
+    seedPoint: options.seedPoint ?? null,
+    followSeed: options.followSeed ?? false,
+    preferPoint: options.preferPoint ?? null,
   };
 }
 
@@ -57,6 +63,18 @@ function getPixelRegion(width, height, region) {
     minY: Math.max(0, Math.min(height - 1, minY)),
     maxY: Math.max(0, Math.min(height - 1, maxY)),
   };
+}
+
+function averageBrightness(frame, width, region) {
+  let total = 0;
+  let count = 0;
+  for (let y = region.minY; y <= region.maxY; y += 1) {
+    for (let x = region.minX; x <= region.maxX; x += 1) {
+      total += brightnessAt(frame, y * width + x);
+      count += 1;
+    }
+  }
+  return count > 0 ? total / count : 0;
 }
 
 function componentFromSeed(mask, visited, width, height, seedX, seedY) {
@@ -112,9 +130,30 @@ function componentFromSeed(mask, visited, width, height, seedX, seedY) {
   };
 }
 
-export function findBrightMovingBall(previousFrame, currentFrame, options = {}) {
-  if (!previousFrame || !currentFrame) return null;
-  if (previousFrame.width !== currentFrame.width || previousFrame.height !== currentFrame.height) return null;
+function candidatePreferenceScore(candidate, options, width, height) {
+  const aspect = candidate.boxWidth / candidate.boxHeight;
+  const roundnessPenalty = Math.abs(1 - aspect);
+  const areaScore = candidate.area * candidate.compactness;
+  const contrastScore = (candidate.objectContrast ?? 0) / 40;
+  let score = areaScore + contrastScore - roundnessPenalty;
+
+  const preferPoint = options.preferPoint;
+  if (preferPoint) {
+    const normalizedCandidate = { x: normalize(candidate.pixelX, width), y: normalize(candidate.pixelY, height) };
+    const jump = distance(preferPoint, normalizedCandidate);
+    if (jump > options.maxNormalizedJump) {
+      score -= 100 + jump * 100;
+    } else {
+      score += Math.max(0, options.maxNormalizedJump - jump) * 20;
+    }
+  }
+
+  return score;
+}
+
+function findMovingBallCandidates(previousFrame, currentFrame, options = {}) {
+  if (!previousFrame || !currentFrame) return [];
+  if (previousFrame.width !== currentFrame.width || previousFrame.height !== currentFrame.height) return [];
 
   const width = currentFrame.width;
   const height = currentFrame.height;
@@ -122,21 +161,30 @@ export function findBrightMovingBall(previousFrame, currentFrame, options = {}) 
   const resolved = getOptions(options);
   const maxArea = Math.max(resolved.minArea, totalPixels * resolved.maxAreaRatio);
   const region = getPixelRegion(width, height, resolved.region);
+  const backgroundBrightness = averageBrightness(currentFrame, width, region);
   const mask = new Uint8Array(totalPixels);
 
   for (let y = region.minY; y <= region.maxY; y += 1) {
     for (let x = region.minX; x <= region.maxX; x += 1) {
       const pixelIndex = y * width + x;
-      const brightness = brightnessAt(currentFrame, pixelIndex);
+      const currentBrightness = brightnessAt(currentFrame, pixelIndex);
       const diff = colorDistance(previousFrame, currentFrame, pixelIndex);
-      if (brightness >= resolved.minBrightness && diff >= resolved.minDiff) {
+      const objectContrast = Math.abs(currentBrightness - backgroundBrightness);
+      const isContrasty = objectContrast >= resolved.minObjectContrast;
+      const isBrightBall = currentBrightness >= resolved.minBrightness && isContrasty;
+      const isDarkBall =
+        resolved.includeDarkObjects &&
+        currentBrightness <= resolved.maxDarkBrightness &&
+        isContrasty;
+
+      if (diff >= resolved.minDiff && (isBrightBall || isDarkBall)) {
         mask[pixelIndex] = 1;
       }
     }
   }
 
   const visited = new Uint8Array(totalPixels);
-  let best = null;
+  const candidates = [];
 
   for (let y = region.minY; y <= region.maxY; y += 1) {
     for (let x = region.minX; x <= region.maxX; x += 1) {
@@ -148,29 +196,34 @@ export function findBrightMovingBall(previousFrame, currentFrame, options = {}) 
       if (component.area < resolved.minArea || component.area > maxArea) continue;
       if (component.compactness < resolved.minCompactness) continue;
 
-      const aspect = component.boxWidth / component.boxHeight;
-      const roundnessPenalty = Math.abs(1 - aspect);
-      const score = component.area * component.compactness - roundnessPenalty;
+      const componentIndex = Math.round(component.pixelY) * width + Math.round(component.pixelX);
+      const componentBrightness = brightnessAt(currentFrame, componentIndex);
+      const objectContrast = Math.abs(componentBrightness - backgroundBrightness);
+      const candidate = {
+        ...component,
+        objectContrast,
+      };
+      const score = candidatePreferenceScore(candidate, resolved, width, height);
+      const confidence = Math.max(0.01, score);
+      if (confidence < resolved.minConfidence) continue;
 
-      if (!best || score > best.score) {
-        best = { ...component, score };
-      }
+      candidates.push({
+        pixelX: candidate.pixelX,
+        pixelY: candidate.pixelY,
+        x: normalize(candidate.pixelX, width),
+        y: normalize(candidate.pixelY, height),
+        area: candidate.area,
+        confidence,
+        score,
+      });
     }
   }
 
-  if (!best) return null;
+  return candidates.sort((a, b) => b.score - a.score);
+}
 
-  const confidence = Math.max(0.01, best.score);
-  if (confidence < resolved.minConfidence) return null;
-
-  return {
-    pixelX: best.pixelX,
-    pixelY: best.pixelY,
-    x: normalize(best.pixelX, width),
-    y: normalize(best.pixelY, height),
-    area: best.area,
-    confidence,
-  };
+export function findBrightMovingBall(previousFrame, currentFrame, options = {}) {
+  return findMovingBallCandidates(previousFrame, currentFrame, options)[0] ?? null;
 }
 
 export function filterTrajectoryOutliers(points, options = {}) {
@@ -215,20 +268,27 @@ export function smoothTracerPoints(points) {
 export function traceBallFromFrameSamples(samples, options = {}) {
   const resolved = getOptions(options);
   const points = [];
+  let previousAccepted = resolved.seedPoint;
 
   for (let i = 1; i < samples.length; i += 1) {
     const previous = samples[i - 1];
     const current = samples[i];
-    const candidate = findBrightMovingBall(previous.frame, current.frame, resolved);
+    const preferPoint = resolved.followSeed ? previousAccepted : null;
+    const candidate = findBrightMovingBall(previous.frame, current.frame, {
+      ...resolved,
+      preferPoint,
+    });
 
     if (candidate) {
-      points.push({
+      const point = {
         id: `auto-${i}-${Math.round(candidate.pixelX)}-${Math.round(candidate.pixelY)}`,
         time: current.time,
         x: candidate.x,
         y: candidate.y,
         confidence: candidate.confidence,
-      });
+      };
+      points.push(point);
+      previousAccepted = point;
     }
   }
 
