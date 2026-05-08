@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server'
 
 export const config = {
@@ -7,7 +6,21 @@ export const config = {
 
 export const maxDuration = 60
 
-const OPENAI_KEY = process.env.OPENAI_API_KEY
+function getOpenAIKey() {
+  return process.env.OPENAI_API_KEY?.trim()
+}
+
+function openAIErrorResponse(status: number) {
+  const isAuthError = status === 401 || status === 403
+  return NextResponse.json(
+    {
+      error: isAuthError
+        ? 'AI analysis is temporarily unavailable because the service credentials are not configured correctly.'
+        : 'AI analysis failed. Please try again.',
+    },
+    { status: isAuthError ? 502 : 500 }
+  )
+}
 
 const SWING_PROMPT = `You are an expert PGA golf swing analyst. Analyze this golf swing image sequence and provide a detailed breakdown.
 
@@ -37,8 +50,11 @@ Then provide an overall analysis with:
 Return ONLY valid JSON matching this schema. No markdown, no code blocks.`
 
 export async function POST(req: NextRequest) {
-  if (!OPENAI_KEY) {
-    return NextResponse.json({ error: 'API key not configured' }, { status: 500 })
+  const openAIKey = getOpenAIKey()
+
+  if (!openAIKey) {
+    console.error('OpenAI API key is missing or blank')
+    return openAIErrorResponse(401)
   }
 
   try {
@@ -52,7 +68,7 @@ export async function POST(req: NextRequest) {
     // Build messages with frame images
     const content = [
       { type: 'text', text: SWING_PROMPT },
-      ...frames.slice(0, 4).map((frame: string, i: number) => ({
+      ...frames.slice(0, 4).map((frame: string) => ({
         type: 'image_url',
         image_url: {
           url: frame.startsWith('data:') ? frame : `data:image/jpeg;base64,${frame}`,
@@ -64,7 +80,7 @@ export async function POST(req: NextRequest) {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_KEY}`,
+        'Authorization': `Bearer ${openAIKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -75,11 +91,25 @@ export async function POST(req: NextRequest) {
       }),
     })
 
-    const data = await response.json()
+    let data
+    try {
+      data = await response.json()
+    } catch {
+      data = {}
+    }
     
-    if (data.error) {
-      console.error('OpenAI error:', JSON.stringify(data.error))
-      return NextResponse.json({ error: data.error.message || 'AI analysis failed' }, { status: 500 })
+    if (!response.ok || data.error) {
+      const providerError = data.error || {}
+      console.error(
+        'OpenAI API error:',
+        JSON.stringify({
+          status: response.status,
+          type: providerError.type,
+          code: providerError.code,
+          param: providerError.param,
+        })
+      )
+      return openAIErrorResponse(response.status)
     }
 
     const text = data.choices?.[0]?.message?.content || ''
@@ -94,7 +124,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ analysis })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 })
   }
 }
