@@ -111,22 +111,42 @@ function seedSearchRegion(seed: BallLocation, radius = 0.28) {
   };
 }
 
-function generateEstimatedTracerPoints(seed: BallLocation, startSeconds: number, endSeconds: number, detected: TracerPoint[] = []) {
+function generateEstimatedTracerPoints(
+  seed: BallLocation,
+  startSeconds: number,
+  endSeconds: number,
+  detected: TracerPoint[] = [],
+  target?: BallLocation | null,
+) {
   const sortedDetected = sortTracerPoints(detected) as TracerPoint[];
   const firstDetected = sortedDetected[0];
   const secondDetected = sortedDetected[1];
-  const hasDirection = firstDetected && Math.hypot(firstDetected.x - seed.x, firstDetected.y - seed.y) > 0.015;
+  const hasTarget = Boolean(target && Math.hypot(target.x - seed.x, target.y - seed.y) > 0.02);
+  const hasDirection = !hasTarget && firstDetected && Math.hypot(firstDetected.x - seed.x, firstDetected.y - seed.y) > 0.015;
   const duration = Math.max(1.2, Math.min(3.5, endSeconds - startSeconds || 2.5));
-  const horizontalDirection = hasDirection
-    ? Math.sign(firstDetected.x - seed.x) || (seed.x < 0.5 ? 1 : -1)
-    : seed.x < 0.5 ? 1 : -1;
-  const verticalDirection = hasDirection ? Math.sign(firstDetected.y - seed.y) || -1 : -1;
-  const horizontalScale = hasDirection && secondDetected
-    ? Math.min(0.42, Math.max(0.12, Math.abs(secondDetected.x - seed.x) * 4))
-    : 0.18;
-  const verticalScale = hasDirection && secondDetected
-    ? Math.min(0.5, Math.max(0.18, Math.abs(secondDetected.y - seed.y) * 4))
-    : 0.38;
+  const targetDx = target ? target.x - seed.x : 0;
+  const targetDy = target ? target.y - seed.y : 0;
+  const horizontalDirection = hasTarget
+    ? Math.sign(targetDx) || (seed.x < 0.5 ? 1 : -1)
+    : hasDirection
+      ? Math.sign(firstDetected.x - seed.x) || (seed.x < 0.5 ? 1 : -1)
+      : seed.x < 0.5 ? 1 : -1;
+  const verticalDirection = hasTarget
+    ? Math.sign(targetDy) || -1
+    : hasDirection
+      ? Math.sign(firstDetected.y - seed.y) || -1
+      : -1;
+  const targetDistance = target ? Math.hypot(targetDx, targetDy) : 0;
+  const horizontalScale = hasTarget
+    ? Math.min(0.48, Math.max(0.16, Math.abs(targetDx) * 0.75 + targetDistance * 0.12))
+    : hasDirection && secondDetected
+      ? Math.min(0.42, Math.max(0.12, Math.abs(secondDetected.x - seed.x) * 4))
+      : 0.18;
+  const verticalScale = hasTarget
+    ? Math.min(0.52, Math.max(0.16, Math.abs(targetDy) * 0.85 + targetDistance * 0.18))
+    : hasDirection && secondDetected
+      ? Math.min(0.5, Math.max(0.18, Math.abs(secondDetected.y - seed.y) * 4))
+      : 0.38;
 
   return Array.from({ length: 7 }, (_, index) => {
     const progress = index / 6;
@@ -248,6 +268,7 @@ export default function BallTracerPage() {
   const [error, setError] = useState<string | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [preRecordBallLocation, setPreRecordBallLocation] = useState<BallLocation | null>(null);
+  const [preRecordTargetLocation, setPreRecordTargetLocation] = useState<BallLocation | null>(null);
   const [recording, setRecording] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [tracking, setTracking] = useState(false);
@@ -267,15 +288,22 @@ export default function BallTracerPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const seededBallLocationRef = useRef<BallLocation | null>(null);
+  const seededTargetLocationRef = useRef<BallLocation | null>(null);
   const animationRef = useRef<number | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  const loadVideoUrl = useCallback((url: string, name = "Recorded shot", seededBallLocation?: BallLocation | null) => {
+  const loadVideoUrl = useCallback((
+    url: string,
+    name = "Recorded shot",
+    seededBallLocation?: BallLocation | null,
+    seededTargetLocation?: BallLocation | null,
+  ) => {
     setVideoUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous);
       return url;
     });
     seededBallLocationRef.current = seededBallLocation ?? null;
+    seededTargetLocationRef.current = seededTargetLocation ?? null;
     setVideoName(name);
     setPoints(
       seededBallLocation
@@ -380,6 +408,7 @@ export default function BallTracerPage() {
       });
       setCameraStream(stream);
       setPreRecordBallLocation(null);
+      setPreRecordTargetLocation(null);
     } catch {
       setError("Camera access was blocked. You can still upload a video from your camera roll.");
     }
@@ -393,18 +422,26 @@ export default function BallTracerPage() {
     const pixelX = client.clientX - rect.left;
     const pixelY = client.clientY - rect.top;
     const normalized = normalizeCanvasPoint(pixelX, pixelY, rect.width, rect.height) as BallLocation;
-    setPreRecordBallLocation(normalized);
+    if (!preRecordBallLocation) {
+      setPreRecordBallLocation(normalized);
+      setPreRecordTargetLocation(null);
+      setError(null);
+      return;
+    }
+
+    setPreRecordTargetLocation(normalized);
     setError(null);
   };
 
   const startRecording = () => {
     if (!cameraStream) return;
-    if (!preRecordBallLocation) {
-      setError("Before recording, tap the ball in the camera preview so Clubby knows where to start tracking.");
+    if (!preRecordBallLocation || !preRecordTargetLocation) {
+      setError("Before recording, tap the ball first, then tap the target/flight direction in the camera preview.");
       return;
     }
 
     const seedBallLocation = preRecordBallLocation;
+    const seedTargetLocation = preRecordTargetLocation;
     chunksRef.current = [];
     const recorder = new MediaRecorder(cameraStream, { mimeType: "video/webm" });
     mediaRecorderRef.current = recorder;
@@ -415,10 +452,11 @@ export default function BallTracerPage() {
 
     recorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "video/webm" });
-      loadVideoUrl(URL.createObjectURL(blob), "Clubby recorded shot.webm", seedBallLocation);
+      loadVideoUrl(URL.createObjectURL(blob), "Clubby recorded shot.webm", seedBallLocation, seedTargetLocation);
       cameraStream.getTracks().forEach((track) => track.stop());
       setCameraStream(null);
       setPreRecordBallLocation(null);
+      setPreRecordTargetLocation(null);
       setRecording(false);
     };
 
@@ -529,6 +567,7 @@ export default function BallTracerPage() {
       const samples: Array<{ time: number; frame: ImageData }> = [];
       const sortedExistingPoints = sortTracerPoints(points) as TracerPoint[];
       const refSeed = seededBallLocationRef.current;
+      const refTarget = seededTargetLocationRef.current;
       const seedPoint = sortedExistingPoints.find(
         (point) => point.time >= startSeconds - 0.35 && point.time <= endSeconds,
       ) ?? (refSeed ? { id: "recorded-seed", time: startSeconds, x: refSeed.x, y: refSeed.y } : null);
@@ -589,7 +628,7 @@ export default function BallTracerPage() {
 
       if (bestDetected.length < 2) {
         if (seedPoint) {
-          const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[]);
+          const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[], refTarget);
           setPoints(estimatedPoints);
           setTrackingStatus("Ball was marked, but the flight was not visible enough to truly track. Clubby generated an estimated tracer from the marked ball location.");
           await seekVideo(video, estimatedPoints[0]?.time ?? startSeconds);
@@ -601,7 +640,7 @@ export default function BallTracerPage() {
       }
 
       if (seedPoint && !isCoherentSeededPath(seedPoint, bestDetected as TracerPoint[])) {
-        const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[]);
+        const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[], refTarget);
         setPoints(estimatedPoints);
         setTrackingStatus("Detected motion was too scattered to trust, so Clubby generated a clean estimated tracer from your marked ball location.");
         await seekVideo(video, estimatedPoints[0]?.time ?? startSeconds);
@@ -763,7 +802,7 @@ export default function BallTracerPage() {
               <div>
                 <h2 className="text-xl font-bold">Camera</h2>
                 <p className="mt-1 text-sm text-gray-400">
-                  Step 1: tap the ball in the preview. Step 2: start recording and swing.
+                  Step 1: tap the ball. Step 2: tap the target/flight direction. Step 3: record the swing.
                 </p>
               </div>
               {recording ? (
@@ -772,7 +811,7 @@ export default function BallTracerPage() {
                 <button
                   type="button"
                   onClick={startRecording}
-                  disabled={!preRecordBallLocation}
+                  disabled={!preRecordBallLocation || !preRecordTargetLocation}
                   className="px-5 py-2 rounded-full bg-gold text-charcoal font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Start Recording
@@ -785,7 +824,7 @@ export default function BallTracerPage() {
               onTouchEnd={markPreRecordBallLocation}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
-                  setError("Tap or click directly on the ball in the camera preview before recording.");
+                  setError("Tap/click the ball first, then tap/click the target direction before recording.");
                 }
               }}
               role="button"
@@ -801,14 +840,43 @@ export default function BallTracerPage() {
                   <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold" />
                 </div>
               )}
+              {preRecordTargetLocation && (
+                <div
+                  className="pointer-events-none absolute h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-sky-300 shadow-[0_0_22px_rgba(125,211,252,0.75)]"
+                  style={{ left: `${preRecordTargetLocation.x * 100}%`, top: `${preRecordTargetLocation.y * 100}%` }}
+                >
+                  <span className="absolute left-1/2 top-1/2 text-xs font-black text-sky-100 -translate-x-1/2 -translate-y-1/2">T</span>
+                </div>
+              )}
+              {preRecordBallLocation && preRecordTargetLocation && (
+                <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <line
+                    x1={preRecordBallLocation.x * 100}
+                    y1={preRecordBallLocation.y * 100}
+                    x2={preRecordTargetLocation.x * 100}
+                    y2={preRecordTargetLocation.y * 100}
+                    stroke="rgba(247,215,116,0.85)"
+                    strokeWidth="0.6"
+                    strokeDasharray="2 2"
+                  />
+                </svg>
+              )}
               {!recording && !preRecordBallLocation && (
                 <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-2xl bg-black/70 p-3 text-center text-sm text-white backdrop-blur">
-                  Tap the ball before recording so Clubby can lock onto its starting location.
+                  Tap the ball first.
+                </div>
+              )}
+              {!recording && preRecordBallLocation && !preRecordTargetLocation && (
+                <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-2xl bg-black/70 p-3 text-center text-sm text-white backdrop-blur">
+                  Ball marked. Now tap the target/flight direction downrange.
                 </div>
               )}
             </div>
-            {preRecordBallLocation && !recording && (
-              <p className="mt-3 text-gold text-sm">Ball marked. Start recording when the golfer is ready.</p>
+            {preRecordBallLocation && !preRecordTargetLocation && !recording && (
+              <p className="mt-3 text-gold text-sm">Ball marked. Tap a downrange target point next.</p>
+            )}
+            {preRecordBallLocation && preRecordTargetLocation && !recording && (
+              <p className="mt-3 text-gold text-sm">Ball and target marked. Start recording when the golfer is ready.</p>
             )}
             {recording && <p className="mt-3 text-red-300 text-sm">Recording… swing when ready, then tap Stop Recording.</p>}
           </section>
