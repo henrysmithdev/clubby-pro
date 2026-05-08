@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export const config = {
-  api: { bodyParser: { sizeLimit: '20mb' } },
-}
-
 export const maxDuration = 60
 
 function getOpenAIKey() {
