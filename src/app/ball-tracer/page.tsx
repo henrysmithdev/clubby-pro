@@ -93,6 +93,53 @@ function formatTime(seconds: number) {
   return `${seconds.toFixed(2)}s`;
 }
 
+function clamp01(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(1, Math.max(0, value));
+}
+
+function seedSearchRegion(seed: BallLocation, radius = 0.28) {
+  const x = clamp01(seed.x - radius);
+  const y = clamp01(seed.y - radius);
+  const maxX = clamp01(seed.x + radius);
+  const maxY = clamp01(seed.y + radius);
+  return {
+    x,
+    y,
+    width: Math.max(0.12, maxX - x),
+    height: Math.max(0.12, maxY - y),
+  };
+}
+
+function generateEstimatedTracerPoints(seed: BallLocation, startSeconds: number, endSeconds: number, detected: TracerPoint[] = []) {
+  const sortedDetected = sortTracerPoints(detected) as TracerPoint[];
+  const firstDetected = sortedDetected[0];
+  const secondDetected = sortedDetected[1];
+  const hasDirection = firstDetected && Math.hypot(firstDetected.x - seed.x, firstDetected.y - seed.y) > 0.015;
+  const duration = Math.max(1.2, Math.min(3.5, endSeconds - startSeconds || 2.5));
+  const horizontalDirection = hasDirection
+    ? Math.sign(firstDetected.x - seed.x) || (seed.x < 0.5 ? 1 : -1)
+    : seed.x < 0.5 ? 1 : -1;
+  const verticalDirection = hasDirection ? Math.sign(firstDetected.y - seed.y) || -1 : -1;
+  const horizontalScale = hasDirection && secondDetected
+    ? Math.min(0.42, Math.max(0.12, Math.abs(secondDetected.x - seed.x) * 4))
+    : 0.18;
+  const verticalScale = hasDirection && secondDetected
+    ? Math.min(0.5, Math.max(0.18, Math.abs(secondDetected.y - seed.y) * 4))
+    : 0.38;
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const progress = index / 6;
+    const curveLift = Math.sin(progress * Math.PI) * 0.08;
+    return {
+      id: `estimated-${index}-${crypto.randomUUID()}`,
+      time: Number((startSeconds + progress * duration).toFixed(2)),
+      x: clamp01(seed.x + horizontalDirection * horizontalScale * progress),
+      y: clamp01(seed.y + verticalDirection * verticalScale * progress - curveLift),
+    };
+  });
+}
+
 function drawSmoothPath(
   ctx: CanvasRenderingContext2D,
   points: TracerPoint[],
@@ -188,6 +235,7 @@ export default function BallTracerPage() {
   const liveVideoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const seededBallLocationRef = useRef<BallLocation | null>(null);
   const animationRef = useRef<number | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -196,6 +244,7 @@ export default function BallTracerPage() {
       if (previous) URL.revokeObjectURL(previous);
       return url;
     });
+    seededBallLocationRef.current = seededBallLocation ?? null;
     setVideoName(name);
     setPoints(
       seededBallLocation
@@ -461,9 +510,10 @@ export default function BallTracerPage() {
       const sampleInterval = video.duration <= 4 ? 0.05 : 0.07;
       const samples: Array<{ time: number; frame: ImageData }> = [];
       const sortedExistingPoints = sortTracerPoints(points) as TracerPoint[];
+      const refSeed = seededBallLocationRef.current;
       const seedPoint = sortedExistingPoints.find(
         (point) => point.time >= startSeconds - 0.35 && point.time <= endSeconds,
-      );
+      ) ?? (refSeed ? { id: "recorded-seed", time: startSeconds, x: refSeed.x, y: refSeed.y } : null);
 
       for (let time = startSeconds; time <= endSeconds; time += sampleInterval) {
         setTrackingStatus(`Scanning video for ball flight ${time.toFixed(1)}s / ${endSeconds.toFixed(1)}s…`);
@@ -474,7 +524,12 @@ export default function BallTracerPage() {
 
       setTrackingStatus("Choosing the most likely ball flight path…");
       const attempts = seedPoint
-        ? [{ preset: trackSensitivity, region: trackRegion }]
+        ? [
+            { preset: "hardToSee" as TrackSensitivity, region: "middle" as TrackRegion },
+            { preset: "balanced" as TrackSensitivity, region: "middle" as TrackRegion },
+            { preset: "hardToSee" as TrackSensitivity, region: "full" as TrackRegion },
+            { preset: trackSensitivity, region: trackRegion },
+          ]
         : [
             { preset: "balanced" as TrackSensitivity, region: "full" as TrackRegion },
             { preset: "brightSky" as TrackSensitivity, region: "upper" as TrackRegion },
@@ -488,17 +543,18 @@ export default function BallTracerPage() {
 
       for (const attempt of attempts) {
         const sensitivity = sensitivityPresets[attempt.preset];
+        const region = seedPoint ? seedSearchRegion(seedPoint, attempt.region === "full" ? 0.42 : 0.28) : selectedTrackRegion(attempt.region);
         const detected = traceBallFromFrameSamples(samples, {
           minBrightness: sensitivity.minBrightness,
-          minDiff: sensitivity.minDiff,
-          minObjectContrast: sensitivity.minObjectContrast,
+          minDiff: seedPoint ? Math.max(8, sensitivity.minDiff - 6) : sensitivity.minDiff,
+          minObjectContrast: seedPoint ? Math.max(6, sensitivity.minObjectContrast - 6) : sensitivity.minObjectContrast,
           includeDarkObjects: true,
           maxDarkBrightness: sensitivity.maxDarkBrightness,
           minArea: 1,
-          maxAreaRatio: sensitivity.maxAreaRatio,
-          region: selectedTrackRegion(attempt.region),
-          minConfidence,
-          maxNormalizedJump: maxJump,
+          maxAreaRatio: seedPoint ? Math.min(0.01, sensitivity.maxAreaRatio) : sensitivity.maxAreaRatio,
+          region,
+          minConfidence: seedPoint ? Math.min(minConfidence, 0.15) : minConfidence,
+          maxNormalizedJump: seedPoint ? Math.max(maxJump, 0.42) : maxJump,
           seedPoint: seedPoint ? { x: seedPoint.x, y: seedPoint.y } : null,
           followSeed: Boolean(seedPoint),
           autoSelectTrajectory: !seedPoint,
@@ -514,6 +570,14 @@ export default function BallTracerPage() {
       }
 
       if (bestDetected.length < 2) {
+        if (seedPoint) {
+          const estimatedPoints = generateEstimatedTracerPoints(seedPoint, startSeconds, endSeconds, bestDetected as TracerPoint[]);
+          setPoints(estimatedPoints);
+          setTrackingStatus("Ball was marked, but the flight was not visible enough to truly track. Clubby generated an estimated tracer from the marked ball location.");
+          await seekVideo(video, estimatedPoints[0]?.time ?? startSeconds);
+          return;
+        }
+
         setError("Clubby could not automatically find the ball flight in this clip. Try a slow-motion angle from behind the ball with the full launch in frame.");
         return;
       }
