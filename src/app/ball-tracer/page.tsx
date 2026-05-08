@@ -24,6 +24,11 @@ type TracerSettings = {
   showBallDot: boolean;
 };
 
+type BallLocation = {
+  x: number;
+  y: number;
+};
+
 type TrackRegion = "full" | "upper" | "middle" | "right";
 type TrackSensitivity = "balanced" | "brightSky" | "hardToSee";
 
@@ -164,6 +169,7 @@ export default function BallTracerPage() {
   const [settings, setSettings] = useState<TracerSettings>(defaultSettings);
   const [error, setError] = useState<string | null>(null);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [preRecordBallLocation, setPreRecordBallLocation] = useState<BallLocation | null>(null);
   const [recording, setRecording] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [tracking, setTracking] = useState(false);
@@ -185,19 +191,30 @@ export default function BallTracerPage() {
   const animationRef = useRef<number | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  const loadVideoUrl = useCallback((url: string, name = "Recorded shot") => {
+  const loadVideoUrl = useCallback((url: string, name = "Recorded shot", seededBallLocation?: BallLocation | null) => {
     setVideoUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous);
       return url;
     });
     setVideoName(name);
-    setPoints([]);
+    setPoints(
+      seededBallLocation
+        ? [
+            {
+              id: `pre-record-ball-${crypto.randomUUID()}`,
+              time: 0,
+              x: seededBallLocation.x,
+              y: seededBallLocation.y,
+            },
+          ]
+        : [],
+    );
     setExportUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous);
       return null;
     });
     setError(null);
-    setTrackingStatus(null);
+    setTrackingStatus(seededBallLocation ? "Ball marked before recording — using that spot to start tracking." : null);
     setTrackStart(0);
     setTrackEnd(8);
   }, []);
@@ -295,14 +312,32 @@ export default function BallTracerPage() {
         audio: false,
       });
       setCameraStream(stream);
+      setPreRecordBallLocation(null);
     } catch {
       setError("Camera access was blocked. You can still upload a video from your camera roll.");
     }
   };
 
+  const markPreRecordBallLocation = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!cameraStream || recording) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const client = "touches" in event ? event.touches[0] ?? event.changedTouches[0] : event;
+    const pixelX = client.clientX - rect.left;
+    const pixelY = client.clientY - rect.top;
+    const normalized = normalizeCanvasPoint(pixelX, pixelY, rect.width, rect.height) as BallLocation;
+    setPreRecordBallLocation(normalized);
+    setError(null);
+  };
+
   const startRecording = () => {
     if (!cameraStream) return;
+    if (!preRecordBallLocation) {
+      setError("Before recording, tap the ball in the camera preview so Clubby knows where to start tracking.");
+      return;
+    }
 
+    const seedBallLocation = preRecordBallLocation;
     chunksRef.current = [];
     const recorder = new MediaRecorder(cameraStream, { mimeType: "video/webm" });
     mediaRecorderRef.current = recorder;
@@ -313,9 +348,10 @@ export default function BallTracerPage() {
 
     recorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "video/webm" });
-      loadVideoUrl(URL.createObjectURL(blob), "Clubby recorded shot.webm");
+      loadVideoUrl(URL.createObjectURL(blob), "Clubby recorded shot.webm", seedBallLocation);
       cameraStream.getTracks().forEach((track) => track.stop());
       setCameraStream(null);
+      setPreRecordBallLocation(null);
       setRecording(false);
     };
 
@@ -602,13 +638,13 @@ export default function BallTracerPage() {
                 onClick={startCamera}
                 className="px-6 py-3 rounded-full border border-white/20 text-white font-semibold hover:border-gold hover:text-gold transition"
               >
-                Record Shot
+                Open Camera + Mark Ball
               </button>
               <input ref={fileInputRef} type="file" accept="video/*" onChange={handleUpload} className="hidden" />
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-gray-300">
-              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">1.</span> Upload or record a steady shot video.</div>
-              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">2.</span> Clubby automatically finds and tracks the ball after impact.</div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">1.</span> Upload a video, or open the camera and tap the ball before recording.</div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">2.</span> Clubby uses the marked ball location to find launch after impact.</div>
               <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">3.</span> Review the tracer and export the replay.</div>
             </div>
           </div>
@@ -633,15 +669,57 @@ export default function BallTracerPage() {
 
         {cameraStream && (
           <section className="mt-10 rounded-3xl border border-white/10 bg-gray-950 p-5">
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <h2 className="text-xl font-bold">Camera</h2>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Camera</h2>
+                <p className="mt-1 text-sm text-gray-400">
+                  Step 1: tap the ball in the preview. Step 2: start recording and swing.
+                </p>
+              </div>
               {recording ? (
-                <button onClick={stopRecording} className="px-5 py-2 rounded-full bg-red-500 text-white font-bold">Stop Recording</button>
+                <button type="button" onClick={stopRecording} className="px-5 py-2 rounded-full bg-red-500 text-white font-bold">Stop Recording</button>
               ) : (
-                <button onClick={startRecording} className="px-5 py-2 rounded-full bg-gold text-charcoal font-bold">Start Recording</button>
+                <button
+                  type="button"
+                  onClick={startRecording}
+                  disabled={!preRecordBallLocation}
+                  className="px-5 py-2 rounded-full bg-gold text-charcoal font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Start Recording
+                </button>
               )}
             </div>
-            <video ref={liveVideoRef} autoPlay muted playsInline className="w-full rounded-2xl bg-black max-h-[70vh] object-contain" />
+            <div
+              className="relative rounded-2xl overflow-hidden bg-black border border-white/10 cursor-crosshair touch-none"
+              onClick={markPreRecordBallLocation}
+              onTouchEnd={markPreRecordBallLocation}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  setError("Tap or click directly on the ball in the camera preview before recording.");
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Tap the golf ball before recording"
+            >
+              <video ref={liveVideoRef} autoPlay muted playsInline className="w-full bg-black max-h-[70vh] object-contain" />
+              {preRecordBallLocation && (
+                <div
+                  className="pointer-events-none absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-gold shadow-[0_0_22px_rgba(247,215,116,0.75)]"
+                  style={{ left: `${preRecordBallLocation.x * 100}%`, top: `${preRecordBallLocation.y * 100}%` }}
+                >
+                  <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold" />
+                </div>
+              )}
+              {!recording && !preRecordBallLocation && (
+                <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-2xl bg-black/70 p-3 text-center text-sm text-white backdrop-blur">
+                  Tap the ball before recording so Clubby can lock onto its starting location.
+                </div>
+              )}
+            </div>
+            {preRecordBallLocation && !recording && (
+              <p className="mt-3 text-gold text-sm">Ball marked. Start recording when the golfer is ready.</p>
+            )}
             {recording && <p className="mt-3 text-red-300 text-sm">Recording… swing when ready, then tap Stop Recording.</p>}
           </section>
         )}
