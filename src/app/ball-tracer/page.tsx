@@ -374,10 +374,10 @@ export default function BallTracerPage() {
       video.currentTime = target;
     });
 
-  const selectedTrackRegion = () => {
-    if (trackRegion === "upper") return { x: 0, y: 0, width: 1, height: 0.55 };
-    if (trackRegion === "middle") return { x: 0.15, y: 0.15, width: 0.7, height: 0.7 };
-    if (trackRegion === "right") return { x: 0.4, y: 0, width: 0.6, height: 1 };
+  const selectedTrackRegion = (region: TrackRegion = trackRegion) => {
+    if (region === "upper") return { x: 0, y: 0, width: 1, height: 0.55 };
+    if (region === "middle") return { x: 0.15, y: 0.15, width: 0.7, height: 0.7 };
+    if (region === "right") return { x: 0.4, y: 0, width: 0.6, height: 1 };
     return null;
   };
 
@@ -393,7 +393,7 @@ export default function BallTracerPage() {
     }
   };
 
-  const autoTrackBall = async () => {
+  const autoTrackBall = async (overrides: { start?: number; end?: number; automatic?: boolean } = {}) => {
     const video = videoRef.current;
     if (!video || !videoUrl) return;
 
@@ -403,7 +403,7 @@ export default function BallTracerPage() {
     }
 
     setTracking(true);
-    setTrackingStatus("Preparing video frames…");
+    setTrackingStatus(overrides.automatic ? "Finding the ball automatically…" : "Preparing video frames…");
     setError(null);
 
     try {
@@ -414,55 +414,75 @@ export default function BallTracerPage() {
 
       const sourceWidth = video.videoWidth || 1280;
       const sourceHeight = video.videoHeight || 720;
-      const analysisWidth = Math.min(420, sourceWidth);
+      const analysisWidth = Math.min(480, sourceWidth);
       const analysisHeight = Math.max(1, Math.round((analysisWidth / sourceWidth) * sourceHeight));
       analysisCanvas.width = analysisWidth;
       analysisCanvas.height = analysisHeight;
 
-      const startSeconds = Math.min(Math.max(trackStart, 0), video.duration);
-      const endSeconds = Math.min(Math.max(trackEnd, startSeconds + 0.3), video.duration);
-      const sampleInterval = video.duration <= 4 ? 0.05 : 0.08;
+      const startSeconds = Math.min(Math.max(overrides.start ?? trackStart, 0), video.duration);
+      const defaultEnd = Math.min(video.duration, startSeconds + 12);
+      const endSeconds = Math.min(Math.max(overrides.end ?? trackEnd ?? defaultEnd, startSeconds + 0.3), video.duration);
+      const sampleInterval = video.duration <= 4 ? 0.05 : 0.07;
       const samples: Array<{ time: number; frame: ImageData }> = [];
       const sortedExistingPoints = sortTracerPoints(points) as TracerPoint[];
       const seedPoint = sortedExistingPoints.find(
         (point) => point.time >= startSeconds - 0.35 && point.time <= endSeconds,
       );
-      const sensitivity = sensitivityPresets[trackSensitivity];
-
-      if (seedPoint) {
-        setTrackingStatus("Using your first tapped ball point as the tracker seed…");
-      }
 
       for (let time = startSeconds; time <= endSeconds; time += sampleInterval) {
-        setTrackingStatus(`Scanning ${time.toFixed(1)}s / ${endSeconds.toFixed(1)}s…`);
+        setTrackingStatus(`Scanning video for ball flight ${time.toFixed(1)}s / ${endSeconds.toFixed(1)}s…`);
         await seekVideo(video, time);
         ctx.drawImage(video, 0, 0, analysisWidth, analysisHeight);
         samples.push({ time, frame: ctx.getImageData(0, 0, analysisWidth, analysisHeight) });
       }
 
-      setTrackingStatus("Filtering and smoothing flight path…");
-      const detected = traceBallFromFrameSamples(samples, {
-        minBrightness: sensitivity.minBrightness,
-        minDiff: sensitivity.minDiff,
-        minObjectContrast: sensitivity.minObjectContrast,
-        includeDarkObjects: true,
-        maxDarkBrightness: sensitivity.maxDarkBrightness,
-        minArea: 1,
-        maxAreaRatio: sensitivity.maxAreaRatio,
-        region: selectedTrackRegion(),
-        minConfidence,
-        maxNormalizedJump: maxJump,
-        seedPoint: seedPoint ? { x: seedPoint.x, y: seedPoint.y } : null,
-        followSeed: Boolean(seedPoint),
-        smooth: smoothAutoTrack,
-      }) as Array<{ id: string; time: number; x: number; y: number; confidence?: number }>;
+      setTrackingStatus("Choosing the most likely ball flight path…");
+      const attempts = seedPoint
+        ? [{ preset: trackSensitivity, region: trackRegion }]
+        : [
+            { preset: "balanced" as TrackSensitivity, region: "full" as TrackRegion },
+            { preset: "brightSky" as TrackSensitivity, region: "upper" as TrackRegion },
+            { preset: "hardToSee" as TrackSensitivity, region: "full" as TrackRegion },
+            { preset: "hardToSee" as TrackSensitivity, region: "right" as TrackRegion },
+          ];
 
-      if (detected.length < 2) {
-        setError("Auto Track could not confidently find the ball. Try a brighter/slow-motion video, or tap the ball path manually.");
+      let bestDetected: Array<{ id: string; time: number; x: number; y: number; confidence?: number }> = [];
+      let bestAttempt = attempts[0];
+      let bestScore = -Infinity;
+
+      for (const attempt of attempts) {
+        const sensitivity = sensitivityPresets[attempt.preset];
+        const detected = traceBallFromFrameSamples(samples, {
+          minBrightness: sensitivity.minBrightness,
+          minDiff: sensitivity.minDiff,
+          minObjectContrast: sensitivity.minObjectContrast,
+          includeDarkObjects: true,
+          maxDarkBrightness: sensitivity.maxDarkBrightness,
+          minArea: 1,
+          maxAreaRatio: sensitivity.maxAreaRatio,
+          region: selectedTrackRegion(attempt.region),
+          minConfidence,
+          maxNormalizedJump: maxJump,
+          seedPoint: seedPoint ? { x: seedPoint.x, y: seedPoint.y } : null,
+          followSeed: Boolean(seedPoint),
+          autoSelectTrajectory: !seedPoint,
+          smooth: smoothAutoTrack,
+        }) as Array<{ id: string; time: number; x: number; y: number; confidence?: number }>;
+        const averageConfidence = detected.reduce((sum, point) => sum + (point.confidence ?? 0), 0) / Math.max(1, detected.length);
+        const score = detected.length * 20 + averageConfidence;
+        if (score > bestScore) {
+          bestDetected = detected;
+          bestAttempt = attempt;
+          bestScore = score;
+        }
+      }
+
+      if (bestDetected.length < 2) {
+        setError("Clubby could not automatically find the ball flight in this clip. Try a slow-motion angle from behind the ball with the full launch in frame.");
         return;
       }
 
-      const autoPoints = detected.map((point, index) => ({
+      const autoPoints = bestDetected.map((point, index) => ({
         id: `auto-${index}-${crypto.randomUUID()}`,
         time: point.time,
         x: point.x,
@@ -473,17 +493,28 @@ export default function BallTracerPage() {
         : autoPoints;
 
       setPoints(nextPoints);
-      setTrackingStatus(
-        seedPoint
-          ? `Found ${detected.length} likely ball positions from your seed point.`
-          : `Found ${detected.length} likely ball positions. If it followed the wrong object, tap the ball once near impact and run Auto Track again.`,
-      );
-      await seekVideo(video, startSeconds);
+      setTrackRegion(bestAttempt.region);
+      setTrackSensitivity(bestAttempt.preset);
+      setTrackingStatus(`Ball flight found automatically — ${bestDetected.length} tracking points added.`);
+      await seekVideo(video, nextPoints[0]?.time ?? startSeconds);
     } catch {
-      setError("Auto Track failed on this video. You can still add tracer points manually.");
+      setError("Auto Track failed on this video. Try a slow-motion clip from behind the ball with the ball flight visible.");
     } finally {
       setTracking(false);
     }
+  };
+
+  const handleVideoReady = () => {
+    const video = videoRef.current;
+    drawFrame();
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+
+    const end = Math.min(video.duration, 12);
+    setTrackStart(0);
+    setTrackEnd(Number(end.toFixed(2)));
+    setTimeout(() => {
+      void autoTrackBall({ start: 0, end, automatic: true });
+    }, 0);
   };
 
   const exportReplay = async () => {
@@ -577,8 +608,8 @@ export default function BallTracerPage() {
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-gray-300">
               <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">1.</span> Upload or record a steady shot video.</div>
-              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">2.</span> Set Start just before impact. Optional: tap the ball once to guide tracking.</div>
-              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">3.</span> Auto Track, clean up points, then export.</div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">2.</span> Clubby automatically finds and tracks the ball after impact.</div>
+              <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">3.</span> Review the tracer and export the replay.</div>
             </div>
           </div>
 
@@ -588,8 +619,8 @@ export default function BallTracerPage() {
               <li>• Use a tripod or steady phone.</li>
               <li>• Keep the full ball flight in frame.</li>
               <li>• Use slow motion if possible; 60–120 fps is much easier to track.</li>
-              <li>• If Auto Track misses the ball, pause near impact, tap the ball once, then run Auto Track again.</li>
-              <li>• Use a smaller search area to avoid the clubhead, golfer, and shadows.</li>
+              <li>• Keep the ball visible immediately after impact and into the first part of flight.</li>
+              <li>• If the tracer looks wrong, try “Find Ball Again” or a cleaner angle from behind the ball.</li>
             </ul>
           </div>
         </section>
@@ -624,19 +655,19 @@ export default function BallTracerPage() {
                   <p className="text-sm text-gray-400">{videoName}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={autoTrackBall} disabled={tracking} className="px-4 py-2 rounded-full bg-gold text-charcoal font-bold disabled:opacity-40 hover:bg-soft-gold transition">
-                    {tracking ? "Tracking…" : "Auto Track Ball"}
+                  <button onClick={() => autoTrackBall()} disabled={tracking} className="px-4 py-2 rounded-full bg-gold text-charcoal font-bold disabled:opacity-40 hover:bg-soft-gold transition">
+                    {tracking ? "Finding Ball…" : "Find Ball Again"}
                   </button>
                   <button onClick={undoPoint} disabled={points.length === 0} className="px-4 py-2 rounded-full bg-white/10 disabled:opacity-40 hover:bg-white/20 transition">Undo</button>
                   <button onClick={() => setPoints([])} disabled={points.length === 0} className="px-4 py-2 rounded-full bg-white/10 disabled:opacity-40 hover:bg-white/20 transition">Clear</button>
                 </div>
                 <p className="mt-2 text-sm text-gray-400">
-                  Tip: scrub to just before impact, tap the ball once if you can see it, then use Auto Track. That seed helps the tracker ignore the clubhead.
+                  Clubby now scans the video automatically after upload and chooses the most likely ball flight. Use “Find Ball Again” only if you change settings or upload a new clip.
                 </p>
               </div>
 
               <div className="relative rounded-2xl overflow-hidden bg-black">
-                <video ref={videoRef} src={videoUrl} controls playsInline className="hidden" onLoadedMetadata={drawFrame} />
+                <video ref={videoRef} src={videoUrl} controls playsInline className="hidden" onLoadedMetadata={handleVideoReady} />
                 <canvas
                   ref={canvasRef}
                   onClick={addPointFromCanvas}
@@ -686,109 +717,114 @@ export default function BallTracerPage() {
 
             <aside className="space-y-5">
               <div className="rounded-3xl border border-gold/20 bg-gray-950 p-5">
-                <h3 className="font-bold text-lg">Guided Auto Track</h3>
+                <h3 className="font-bold text-lg">Automatic Ball Tracking</h3>
                 <p className="text-sm text-gray-400 mt-1">
-                  Start with the simple settings below. For tough videos, tap the ball once near impact before pressing Auto Track so Clubby knows which tiny moving object to follow.
+                  Upload a video and Clubby will scan for the ball flight automatically. You should not need to set start/end times.
                 </p>
 
-                <label className="block mt-4 text-sm text-gray-300">
-                  Tracking preset
-                  <select
-                    value={trackSensitivity}
-                    onChange={(event) => setTrackSensitivity(event.target.value as TrackSensitivity)}
-                    className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
-                  >
-                    {Object.entries(sensitivityPresets).map(([value, preset]) => (
-                      <option key={value} value={value}>{preset.label}</option>
-                    ))}
-                  </select>
-                  <span className="mt-1 block text-xs text-gray-500">{sensitivityPresets[trackSensitivity].helper}</span>
-                </label>
-
                 <div className="mt-4 rounded-2xl border border-gold/20 bg-gold/10 p-3 text-sm text-gold">
-                  Quick rescue: pause on the frame where the ball is visible at launch, tap the ball on the video, then Auto Track again.
+                  {points.length > 1 ? "Tracer found. Review the path and export when it looks right." : "Clubby starts tracking automatically as soon as the video loads."}
                 </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <label className="text-sm text-gray-300">
-                    Start second — just before impact
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      value={trackStart}
-                      onChange={(event) => setTrackStart(Number(event.target.value))}
-                      className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
-                    />
-                  </label>
-                  <label className="text-sm text-gray-300">
-                    End second — ball leaves frame
-                    <input
-                      type="number"
-                      min="0.3"
-                      step="0.1"
-                      value={trackEnd}
-                      onChange={(event) => setTrackEnd(Number(event.target.value))}
-                      className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
-                    />
-                  </label>
-                </div>
-
-                <div className="mt-3 flex gap-2">
-                  <button onClick={() => setTrackingBoundary("start")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set Start Before Impact</button>
-                  <button onClick={() => setTrackingBoundary("end")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set End When Ball Leaves</button>
-                </div>
-
-                <label className="block mt-4 text-sm text-gray-300">
-                  Search area
-                  <select
-                    value={trackRegion}
-                    onChange={(event) => setTrackRegion(event.target.value as TrackRegion)}
-                    className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
-                  >
-                    <option value="full">Full frame</option>
-                    <option value="upper">Upper half / sky</option>
-                    <option value="middle">Middle box</option>
-                    <option value="right">Right side / downrange</option>
-                  </select>
-                </label>
-
-                <label className="block mt-4 text-sm text-gray-300">
-                  Minimum confidence: {minConfidence.toFixed(1)}
-                  <input
-                    type="range"
-                    min="0"
-                    max="8"
-                    step="0.5"
-                    value={minConfidence}
-                    onChange={(event) => setMinConfidence(Number(event.target.value))}
-                    className="w-full mt-2"
-                  />
-                </label>
-
-                <label className="block mt-4 text-sm text-gray-300">
-                  Max jump filter: {maxJump.toFixed(2)}
-                  <input
-                    type="range"
-                    min="0.12"
-                    max="0.6"
-                    step="0.02"
-                    value={maxJump}
-                    onChange={(event) => setMaxJump(Number(event.target.value))}
-                    className="w-full mt-2"
-                  />
-                </label>
-
-                <label className="flex items-center gap-3 mt-4 text-sm text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={smoothAutoTrack}
-                    onChange={(event) => setSmoothAutoTrack(event.target.checked)}
-                  />
-                  Smooth suggested path
-                </label>
 
                 {trackingStatus && <p className="mt-4 text-sm text-gold">{trackingStatus}</p>}
+
+                <details className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <summary className="cursor-pointer text-sm font-semibold text-gray-200">Advanced rescue settings</summary>
+                  <p className="mt-2 text-xs text-gray-500">Use these only if automatic tracking follows the club, body, shadows, or turf instead of the ball.</p>
+
+                  <label className="block mt-4 text-sm text-gray-300">
+                    Tracking preset
+                    <select
+                      value={trackSensitivity}
+                      onChange={(event) => setTrackSensitivity(event.target.value as TrackSensitivity)}
+                      className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
+                    >
+                      {Object.entries(sensitivityPresets).map(([value, preset]) => (
+                        <option key={value} value={value}>{preset.label}</option>
+                      ))}
+                    </select>
+                    <span className="mt-1 block text-xs text-gray-500">{sensitivityPresets[trackSensitivity].helper}</span>
+                  </label>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <label className="text-sm text-gray-300">
+                      Start second
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={trackStart}
+                        onChange={(event) => setTrackStart(Number(event.target.value))}
+                        className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
+                      />
+                    </label>
+                    <label className="text-sm text-gray-300">
+                      End second
+                      <input
+                        type="number"
+                        min="0.3"
+                        step="0.1"
+                        value={trackEnd}
+                        onChange={(event) => setTrackEnd(Number(event.target.value))}
+                        className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="mt-3 flex gap-2">
+                    <button onClick={() => setTrackingBoundary("start")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set Start</button>
+                    <button onClick={() => setTrackingBoundary("end")} className="flex-1 rounded-full bg-white/10 px-3 py-2 text-sm hover:bg-white/20 transition">Set End</button>
+                  </div>
+
+                  <label className="block mt-4 text-sm text-gray-300">
+                    Search area
+                    <select
+                      value={trackRegion}
+                      onChange={(event) => setTrackRegion(event.target.value as TrackRegion)}
+                      className="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-white"
+                    >
+                      <option value="full">Full frame</option>
+                      <option value="upper">Upper half / sky</option>
+                      <option value="middle">Middle box</option>
+                      <option value="right">Right side / downrange</option>
+                    </select>
+                  </label>
+
+                  <label className="block mt-4 text-sm text-gray-300">
+                    Minimum confidence: {minConfidence.toFixed(1)}
+                    <input
+                      type="range"
+                      min="0"
+                      max="8"
+                      step="0.5"
+                      value={minConfidence}
+                      onChange={(event) => setMinConfidence(Number(event.target.value))}
+                      className="w-full mt-2"
+                    />
+                  </label>
+
+                  <label className="block mt-4 text-sm text-gray-300">
+                    Max jump filter: {maxJump.toFixed(2)}
+                    <input
+                      type="range"
+                      min="0.12"
+                      max="0.6"
+                      step="0.02"
+                      value={maxJump}
+                      onChange={(event) => setMaxJump(Number(event.target.value))}
+                      className="w-full mt-2"
+                    />
+                  </label>
+
+                  <label className="flex items-center gap-3 mt-4 text-sm text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={smoothAutoTrack}
+                      onChange={(event) => setSmoothAutoTrack(event.target.checked)}
+                    />
+                    Smooth suggested path
+                  </label>
+                </details>
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-gray-950 p-5">

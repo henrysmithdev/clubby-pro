@@ -93,6 +93,44 @@ test('traceBallFromFrameSamples converts detected movement into sorted tracer po
   assert.equal(Math.round(points[1].x * 20), 10);
 });
 
+test('traceBallFromFrameSamples automatically follows the small ball path instead of a larger moving distractor', () => {
+  const samples = [
+    { time: 0, frame: makeFrame(80, 40, [{ x: 8, y: 24 }, { x: 55, y: 12, radius: 3 }]) },
+    { time: 0.1, frame: makeFrame(80, 40, [{ x: 16, y: 22 }, { x: 56, y: 12, radius: 3 }]) },
+    { time: 0.2, frame: makeFrame(80, 40, [{ x: 24, y: 20 }, { x: 57, y: 12, radius: 3 }]) },
+    { time: 0.3, frame: makeFrame(80, 40, [{ x: 32, y: 18 }, { x: 58, y: 12, radius: 3 }]) },
+  ];
+
+  const points = traceBallFromFrameSamples(samples, {
+    autoSelectTrajectory: true,
+    maxNormalizedJump: 0.24,
+    smooth: false,
+  });
+
+  assert.equal(points.length, 3);
+  assert.deepEqual(points.map((point) => Math.round(point.x * 80)), [16, 24, 32]);
+});
+
+test('traceBallFromFrameSamples ignores pre-impact club motion and starts with the launched ball path', () => {
+  const samples = [
+    { time: 0, frame: makeFrame(80, 40, [{ x: 30, y: 24, radius: 4 }]) },
+    { time: 0.1, frame: makeFrame(80, 40, [{ x: 31, y: 24, radius: 4 }]) },
+    { time: 0.2, frame: makeFrame(80, 40, [{ x: 32, y: 24, radius: 4 }, { x: 12, y: 26 }]) },
+    { time: 0.3, frame: makeFrame(80, 40, [{ x: 33, y: 24, radius: 4 }, { x: 22, y: 23 }]) },
+    { time: 0.4, frame: makeFrame(80, 40, [{ x: 34, y: 24, radius: 4 }, { x: 32, y: 20 }]) },
+    { time: 0.5, frame: makeFrame(80, 40, [{ x: 35, y: 24, radius: 4 }, { x: 42, y: 17 }]) },
+  ];
+
+  const points = traceBallFromFrameSamples(samples, {
+    autoSelectTrajectory: true,
+    maxNormalizedJump: 0.24,
+    smooth: false,
+  });
+
+  assert.deepEqual(points.map((point) => Number(point.time.toFixed(1))), [0.2, 0.3, 0.4, 0.5]);
+  assert.deepEqual(points.map((point) => Math.round(point.x * 80)), [12, 22, 32, 42]);
+});
+
 test('traceBallFromFrameSamples follows a seeded ball path instead of a larger distracting moving object', () => {
   const samples = [
     { time: 0, frame: makeFrame(60, 30, [{ x: 6, y: 16 }, { x: 44, y: 10, radius: 2 }]) },

@@ -41,6 +41,8 @@ function getOptions(options = {}) {
     minConfidence: options.minConfidence ?? 0,
     smooth: options.smooth ?? true,
     maxNormalizedJump: options.maxNormalizedJump ?? 0.32,
+    minLaunchStep: options.minLaunchStep ?? 0.025,
+    autoSelectTrajectory: options.autoSelectTrajectory ?? false,
     seedPoint: options.seedPoint ?? null,
     followSeed: options.followSeed ?? false,
     preferPoint: options.preferPoint ?? null,
@@ -133,9 +135,11 @@ function componentFromSeed(mask, visited, width, height, seedX, seedY) {
 function candidatePreferenceScore(candidate, options, width, height) {
   const aspect = candidate.boxWidth / candidate.boxHeight;
   const roundnessPenalty = Math.abs(1 - aspect);
-  const areaScore = candidate.area * candidate.compactness;
-  const contrastScore = (candidate.objectContrast ?? 0) / 40;
-  let score = areaScore + contrastScore - roundnessPenalty;
+  const contrastScore = (candidate.objectContrast ?? 0) / 45;
+  const compactnessScore = candidate.compactness * 4;
+  const sizePenalty = Math.max(0, candidate.area - 9) * 0.45;
+  const tinyNoisePenalty = candidate.area <= 1 ? 0.35 : 0;
+  let score = compactnessScore + contrastScore - roundnessPenalty * 2 - sizePenalty - tinyNoisePenalty;
 
   const preferPoint = options.preferPoint;
   if (preferPoint) {
@@ -265,8 +269,125 @@ export function smoothTracerPoints(points) {
   });
 }
 
+function trimToConsistentLaunch(points) {
+  if (points.length < 3) return points;
+
+  const deltas = [];
+  for (let i = 1; i < points.length; i += 1) {
+    const dx = points[i].x - points[i - 1].x;
+    if (Math.abs(dx) >= 0.01) deltas.push(dx);
+  }
+
+  if (deltas.length < 2) return points;
+
+  const positive = deltas.filter((dx) => dx > 0).length;
+  const dominantSign = positive >= deltas.length - positive ? 1 : -1;
+  let startIndex = 0;
+
+  while (startIndex < points.length - 2) {
+    const dx = points[startIndex + 1].x - points[startIndex].x;
+    if (Math.sign(dx) === dominantSign && Math.abs(dx) >= 0.01) break;
+    startIndex += 1;
+  }
+
+  return points.slice(startIndex);
+}
+
+function selectBestTrajectory(samples, options) {
+  const groups = [];
+
+  for (let i = 1; i < samples.length; i += 1) {
+    const previous = samples[i - 1];
+    const current = samples[i];
+    const candidates = findMovingBallCandidates(previous.frame, current.frame, options)
+      .slice(0, 8)
+      .map((candidate) => ({
+        id: `auto-${i}-${Math.round(candidate.pixelX)}-${Math.round(candidate.pixelY)}`,
+        time: current.time,
+        x: candidate.x,
+        y: candidate.y,
+        confidence: candidate.confidence,
+        baseScore: candidate.score,
+        bestScore: candidate.score,
+        path: null,
+      }));
+
+    if (candidates.length > 0) groups.push(candidates);
+  }
+
+  if (groups.length === 0) return [];
+
+  let bestPath = [];
+  let bestPathScore = -Infinity;
+
+  for (let groupIndex = 0; groupIndex < groups.length; groupIndex += 1) {
+    const group = groups[groupIndex];
+    const previousGroups = groups.slice(Math.max(0, groupIndex - 3), groupIndex).flat();
+
+    for (const candidate of group) {
+      let bestPrevious = null;
+      let bestScore = candidate.baseScore;
+
+      for (const previous of previousGroups) {
+        const jump = distance(previous, candidate);
+        if (jump > options.maxNormalizedJump) continue;
+
+        const stepBonus = jump >= options.minLaunchStep ? 10 : -30;
+        const continuityBonus = Math.max(0, options.maxNormalizedJump - jump) * 6;
+        let motionBonus = 0;
+
+        if (previous.path.length >= 2) {
+          const before = previous.path[previous.path.length - 2];
+          const prevDx = previous.x - before.x;
+          const prevDy = previous.y - before.y;
+          const nextDx = candidate.x - previous.x;
+          const nextDy = candidate.y - previous.y;
+          const prevSpeed = Math.sqrt(prevDx * prevDx + prevDy * prevDy);
+          const nextSpeed = Math.sqrt(nextDx * nextDx + nextDy * nextDy);
+
+          if (prevSpeed > 0 && nextSpeed > 0) {
+            const directionCosine = (prevDx * nextDx + prevDy * nextDy) / (prevSpeed * nextSpeed);
+            motionBonus += directionCosine * 24;
+            motionBonus -= Math.abs(nextSpeed - prevSpeed) * 30;
+          }
+        }
+
+        const score = previous.bestScore + candidate.baseScore + stepBonus + continuityBonus + motionBonus;
+        if (score > bestScore) {
+          bestScore = score;
+          bestPrevious = previous;
+        }
+      }
+
+      candidate.bestScore = bestScore;
+      candidate.path = bestPrevious ? [...bestPrevious.path, candidate] : [candidate];
+      const lengthBonus = candidate.path.length * 18;
+      const launchScore = bestScore + lengthBonus;
+      if (candidate.path.length >= 2 && launchScore > bestPathScore) {
+        bestPathScore = launchScore;
+        bestPath = candidate.path;
+      }
+    }
+  }
+
+  return trimToConsistentLaunch(bestPath.map((point) => ({
+    id: point.id,
+    time: point.time,
+    x: point.x,
+    y: point.y,
+    confidence: point.confidence,
+  })));
+}
+
 export function traceBallFromFrameSamples(samples, options = {}) {
   const resolved = getOptions(options);
+
+  if (resolved.autoSelectTrajectory && !resolved.followSeed) {
+    const selected = selectBestTrajectory(samples, resolved);
+    const filtered = filterTrajectoryOutliers(selected, resolved);
+    return resolved.smooth ? smoothTracerPoints(filtered) : filtered;
+  }
+
   const points = [];
   let previousAccepted = resolved.seedPoint;
 
