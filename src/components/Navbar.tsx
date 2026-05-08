@@ -57,6 +57,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/fit", label: "Get Fitted" },
     { href: "/swing", label: "Swing Analyzer" },
+    { href: "/ball-tracer", label: "Ball Tracer" },
     // { href: "/clubs", label: "Browse Clubs" },  // Hidden per Bryce — re-enable later
     { href: "/learn", label: "Learn" },
     { href: "/about", label: "About" },

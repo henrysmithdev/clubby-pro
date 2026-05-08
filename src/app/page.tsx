@@ -62,12 +62,20 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Link
-              href="/fit"
-              className="inline-flex items-center mt-8 px-8 py-4 rounded-full bg-gold text-charcoal font-semibold text-lg hover:bg-soft-gold hover:scale-105 transition-all duration-200 shadow-lg"
-            >
-              Find Your Perfect Fit →
-            </Link>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/fit"
+                className="inline-flex items-center px-8 py-4 rounded-full bg-gold text-charcoal font-semibold text-lg hover:bg-soft-gold hover:scale-105 transition-all duration-200 shadow-lg"
+              >
+                Find Your Perfect Fit →
+              </Link>
+              <Link
+                href="/ball-tracer"
+                className="inline-flex items-center px-8 py-4 rounded-full bg-white/10 border border-white/25 text-white font-semibold text-lg hover:bg-white/20 hover:scale-105 transition-all duration-200"
+              >
+                Try Ball Tracer
+              </Link>
+            </div>
           </motion.div>
         </div>
         {/* Scroll indicator */}
